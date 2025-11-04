@@ -12,11 +12,6 @@
 ################################################################################
 
 
-#library(EnvStats)
-#library(DEoptim)
-
-
-
 #-------------------------------------------------------------------------------
 dbgev <- function(y, mu = 1, sigma = 1, xi = 0.3, delta = 2){ 
   # DESCRIPTION:
@@ -174,6 +169,85 @@ bgev.mle <- function(x, lower = c(-3,0.1,-3,-0.9), upper = c(3,3,3,3),
   esti
     
 }
+
+
+
+
+
+
+
+bgev.mle = function(x, method_envstats = "mle", deoptim.itermax = 200, optim.method = "L-BFGS-B",
+                    start = NULL, lower = NULL, upper = NULL) 
+{
+  # DESCRIPTION:
+  # fit parameters of a BGEV distribution with data using MLE.
+  # Parameters: x: data for estimating the parameters of the bimodal GEV
+  # lower and upper: lower and upper bounds to search for the true parameter
+  # itermax: maximum number of interations when finding good starting 
+  # values using DEOptim
+  
+  # FUNCTION:
+  # get reasonable starting values using a genetic algorithm 
+  likbgev2 = function(theta) {
+    val = -likbgev(x, theta)
+    if (val == Inf) 
+      return(1e+100)
+    else return(val)
+  }
+  
+  # let user provide start
+  if ( is.null(start) ){
+  
+    
+    fit_gev <- try( egevd(x = x, method = method_envstats) )
+    
+    if ( inherits(fit_gev, "try-error") ) {
+      message("I tried to get good starting values using egevd and it failed. Try using a different method for method_envstats, e.g, pwme. See the help of egevd for the available options.")
+      return NULL
+      }
+    
+    fit_gev <- egevd(x = x, method = method_envstats)
+    mu_start = fit_gev$parameters[1]
+    sd_start = fit_gev$parameters[2]
+    xi_start = -fit_gev$parameters[3]
+    
+    starts = c(mu_start, sd_start, xi_start, 0.1)
+    xi_min = xi_start/5
+    xi_max = xi_start*5
+    if(xi_start < 0){
+      xi_max = xi_start/5
+      xi_min = xi_start*5
+    }
+  }
+  
+  # let user provide lower and upper
+  if ( is.null(lower) | is.null(upper) ){
+  lower = c(mu_start - 2*sd_start, sd_start/5, xi_min,-0.99)
+  upper = c(mu_start + 2*sd_start, 5*sd_start, xi_max,5)
+  }
+  
+  # get more adequate starting for all bgev parameteres simutaneously using DEoptim
+  starts.DEoptim = DEoptim(fn = likbgev2, lower, upper, control = DEoptim.control(itermax = deoptim.itermax, 
+                                                                                  trace = FALSE))
+  
+  # use starting values starts.DEoptim to feed optim and optimize locally
+  esti <- optim(par = starts.DEoptim$optim$bestmem, fn = likbgev2, 
+                method = optim.method, lower = lower, upper = upper)
+  
+  # return
+  esti
+}
+
+
+
+
+
+
+
+
+
+
+
 #-------------------------------------------------------------------------------
 
 

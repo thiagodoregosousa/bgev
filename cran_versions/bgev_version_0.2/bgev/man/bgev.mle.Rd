@@ -8,6 +8,17 @@ that appears to be bimodal.
 \description{
 Finds the maximum likelihood estimators of the bimodal GEV distribution 
 parameters by minimizing the log-likelihood function of the data.
+
+The estimation procedure is a divided into three steps:
+
+1) Use egevd for starting values: We estimate the data using a unimodal GEV distribution (function egevd from package EnvStats). This is justified 
+by the fact that the bgev distribution with delta = 0 is a unimodal GEV distribution with parametesr mu sigma and xi.  
+
+2) DEOptim for more adequate starting values: Use the starting values to create lower and upper bounds and feed it into DEOptim to get starting values for all
+parameters simutaneously.
+
+3) Use optim for local search with starting values for DEOptim.
+
 }
 \usage{
 bgev.mle(x, lower = c(-3, 0.1, -3, -0.9), upper = c(3, 3, 3,3), itermax = 50)
