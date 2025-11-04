@@ -24,4 +24,3 @@ distCheck(fun="bgev", n = 2000,
           support.lower = -Inf, support.upper = support[2], subdivisions = 5000,
           mu = mu, sigma = sigma, xi = xi, delta = delta, var.exists = var.exists, robust = TRUE)
 c(mu,sigma,xi,delta)
-mu

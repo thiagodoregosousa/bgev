@@ -1,0 +1,491 @@
+\nonstopmode{}
+\documentclass[a4paper]{book}
+\usepackage[times,inconsolata,hyper]{Rd}
+\usepackage{makeidx}
+\makeatletter\@ifl@t@r\fmtversion{2018/04/01}{}{\usepackage[utf8]{inputenc}}\makeatother
+% \usepackage{graphicx} % @USE GRAPHICX@
+\makeindex{}
+\begin{document}
+\chapter*{}
+\begin{center}
+{\textbf{\huge Package `bgev'}}
+\par\bigskip{\large \today}
+\end{center}
+\ifthenelse{\boolean{Rd@use@hyper}}{\hypersetup{pdftitle = {bgev: Bimodal GEV Distribution with Location Parameter}}}{}
+\ifthenelse{\boolean{Rd@use@hyper}}{\hypersetup{pdfauthor = {Cira Otiniano Author; Yasmin Lirio Author}}}{}
+\begin{description}
+\raggedright{}
+\item[Type]\AsIs{Package}
+\item[Title]\AsIs{Bimodal GEV Distribution with Location Parameter}
+\item[Version]\AsIs{0.2}
+\item[Date]\AsIs{2025-11-04}
+\item[Depends]\AsIs{EnvStats, DEoptim, stats, MASS}
+\item[Description]\AsIs{Density, distribution function, quantile function random generation and estimation of bimodal GEV distribution given in Otiniano et al. (2023) <}\Rhref{https://doi.org/10.1007/s10651-023-00566-7}{doi:10.1007/s10651-023-00566-7}\AsIs{>. This new generalization of the well-known GEV (Generalized Extreme Value) distribution is useful for modeling heterogeneous bimodal data from different areas.}
+\item[License]\AsIs{GPL-3}
+\item[NeedsCompilation]\AsIs{no}
+\item[Author]\AsIs{Cira Otiniano Author [aut],
+Yasmin Lirio Author [aut],
+Thiago Sousa Developer [cre]}
+\item[Maintainer]\AsIs{Thiago Sousa Developer }\email{thiagoestatistico@gmail.com}\AsIs{}
+\end{description}
+\Rdcontents{Contents}
+\HeaderA{bgev-package}{Bimodal GEV Distribution with Location Parameter}{bgev.Rdash.package}
+\aliasA{bgev}{bgev-package}{bgev}
+\aliasA{dbgev}{bgev-package}{dbgev}
+\aliasA{pbgev}{bgev-package}{pbgev}
+\aliasA{qbgev}{bgev-package}{qbgev}
+\aliasA{rbgev}{bgev-package}{rbgev}
+\keyword{bgev}{bgev-package}
+\keyword{gev}{bgev-package}
+\keyword{bimodal}{bgev-package}
+\keyword{distribution}{bgev-package}
+%
+\begin{Description}
+Density, distribution function, quantile function random generation and estimation of bimodal GEV distribution given in Otiniano et al. (2023) <doi:10.1007/s10651-023-00566-7>. This new generalization of the well-known GEV (Generalized Extreme Value) distribution is useful for modeling heterogeneous bimodal data from different areas.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+dbgev(y, mu = 1, sigma = 1, xi = 0.3, delta = 2)
+pbgev(y, mu = 1, sigma = 1, xi = 0.3, delta = 2)
+qbgev(p, mu = 1, sigma = 1, xi = 0.3, delta = 2)
+rbgev(n, mu = 1, sigma = 1, xi = 0.3, delta = 2)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{y}] 
+a unidimensional vector containing the points to compute the density (dbgev) or  
+the probability (pbgev) froma bimodal GEV distribution with parameters
+\code{mu}, \code{sigma}, \code{xi} and \code{delta}.
+
+\item[\code{p}] 
+a unidimensional vector containing the probabilities 
+used to compute the quantiles
+
+\item[\code{n}] 
+an integer describing the number of observations to generate random bimodal
+GEV observations
+
+\item[\code{mu}] 
+location parameter
+
+\item[\code{sigma}] 
+shape parameter
+
+\item[\code{xi}] 
+shape parameter
+
+\item[\code{delta}] 
+bimodality parameter
+
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Details}
+Density, distribution function, quantile function and random generation of 
+bimodal GEV distribution with location parameter. In addition, maximum likelihood
+estimation based on real data is also provided.
+\end{Details}
+%
+\begin{Value}
+\code{dbgev} gives the density, \code{pbgev} gives the distribution function, 
+\code{qbgev} gives the quantile function, and \code{rbgev} generates random
+bimodal GEV observations. 
+\end{Value}
+%
+\begin{Note}
+
+The probability density of a GEV random variable; \eqn{Y \sim F_{\xi, \sigma, \mu}}{} is given by: 
+
+\deqn{
+	f_{\xi, \mu, \sigma}(y)=
+		\begin{cases}
+		\dfrac{1}{\sigma} \left[ 1+ \xi \left(\dfrac{y-\mu}{\sigma}\right) \right]^{(-1/\xi) -1} \exp\left\{- \left[1+\xi\left(\dfrac{y-\mu}{\sigma}\right)\right]^{-1/\xi}\right\} ,& \text{if } \xi \ne 0 \\
+		\dfrac{1}{\sigma} \exp \left\{ - \left(  \dfrac{y-\mu}{\sigma}\right)  - \exp \left[ - \left(  \dfrac{y-\mu}{\sigma}\right)  \right]  \right\},              & \text{if }  \xi = 0 ,
+	\end{cases}
+}{}
+where \eqn{\xi}{} and \eqn{\sigma}{} are the shape parameters and \eqn{\mu}{} is the location parameter.
+
+The bimodal Generalized Extreme Value (GEV) model, denoted as BGEV, consists of composing the distribution of a random variable following the GEV distribution with a location parameter \eqn{\mu=0}{}, i.e., \eqn{Y \sim F_{\xi, 0, \sigma}}{}, with the transformation \eqn{T_{\mu, \delta}}{} defined below. Thus, the cumulative distribution function (CDF) of a random variable BGEV, denoted as \eqn{X \sim F_{BG_{\xi, \mu, \sigma, \delta}}}{}, is given by:
+
+\deqn{F_{BG_{\xi,\mu,\sigma, \delta}}(x) =  F_{\xi, 0, \sigma}(T_{\mu, \delta}(x)),}{}
+
+where the function \eqn{T_{\mu, \delta}}{} is defined as:
+
+\deqn{T_{\mu, \delta}(x)=\left(  x - \mu  \right) \left| x -\mu \right| ^{\delta}, \quad \delta > -1, \quad \mu \in \mathbb{R}.}{}
+
+Moreover, the function \eqn{T}{} is invertible, with the inverse given by:
+
+\deqn{T^{-1}_{\mu, \delta}(x) = \text{sng}(x) |x|^{\dfrac{1}{\left( \delta +1 \right) }} + \mu.}{}
+
+Additionally, it is differentiable, and its derivative has the following form:
+
+\deqn{T'_{\mu, \delta}(x) = (\delta + 1 ) |x - \mu|^{\delta}.}{}
+
+
+Its probability density function \eqn{X\sim F_{BG_{\xi,\mu,\sigma, \delta}}}{} is given by
+
+\deqn{
+	f_{BG_{\xi,\mu,\sigma, \delta}} (x)= \begin{cases}
+		\dfrac{1}{\sigma} \left[ 1+ \xi \left(\dfrac{T_{\mu, \delta}(x)}{\sigma}\right) \right]^{(-1/\xi) -1} \exp\left[- \left[1+\xi\left(\dfrac{T_{\mu, \delta}(x)}        {\sigma}\right)\right]^{-1/\xi}\right] T'_{\mu, \delta}(x)
+		, & \xi \neq 0 \\
+		\dfrac{1}{\sigma} \exp \left( - \dfrac{T_{\mu, \delta}(x)}{\sigma} \right) \exp \left[- \exp \left( - \dfrac{T_{\mu, \delta}(x)}{\sigma}\right)  \right] T'_{\mu, \delta}(x), &  \xi=0.
+	\end{cases}
+}{}
+
+\end{Note}
+%
+\begin{Author}
+Cira Otiniano Author [aut],
+  Yasmin Lirio Author [aut],
+  Thiago Sousa Developer [cre]
+
+Maintainer: Thiago Sousa Developer <thiagoestatistico@gmail.com>
+\end{Author}
+%
+\begin{References}
+Otiniano, Cira EG, et al. (2023). A bimodal model for extremes data. Environmental and Ecological Statistics, 1-28. http://dx.doi.org/10.1007/s10651-023-00566-7
+\end{References}
+%
+\begin{Examples}
+\begin{ExampleCode}
+# generate 100 values distributed according to a bimodal GEV
+x = rbgev(50, mu = 0.2, sigma = 1, xi = 0.5, delta = 0.2) 
+# estimate the bimodal GEV parameters using the generated data
+bgev.mle(x)
+\end{ExampleCode}
+\end{Examples}
+\HeaderA{bgev.mle}{Parameter estimation of bimodal GEV distribution based on real data  that appears to be bimodal.}{bgev.mle}
+\keyword{bgev}{bgev.mle}
+\keyword{gev}{bgev.mle}
+\keyword{bimodal}{bgev.mle}
+\keyword{mle}{bgev.mle}
+\keyword{estimation}{bgev.mle}
+%
+\begin{Description}
+Finds the maximum likelihood estimators of the bimodal GEV distribution 
+parameters by minimizing the log-likelihood function of the data.
+
+The estimation procedure is a divided into three steps:
+
+1) Use egevd for starting values: We estimate the data using a unimodal GEV distribution (function egevd from package EnvStats). This is justified 
+by the fact that the bgev distribution with delta = 0 is a unimodal GEV distribution with parametesr mu sigma and xi.  
+
+2) DEOptim for more adequate starting values: Use the starting values to create lower and upper bounds and feed it into DEOptim to get starting values for all
+parameters simutaneously.
+
+3) Use optim for local search with starting values for DEOptim.
+
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+bgev.mle(x, method_envstats = "mle", deoptim.itermax = 200, 
+optim.method = "L-BFGS-B",start = NULL, lower = NULL, upper = NULL) 
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{x}] 
+a unidimensional vector containing observations to estimate a bimodal GEV 
+distribution
+
+\item[\code{start}] 
+a vector of dimension 4 containing the starting values for each of the bimodal GEV
+parameters where the search is going to take place. 
+
+
+\item[\code{lower}] 
+a vector of dimension 4 containing the lower limit for each of the bimodal GEV
+parameters where the search is going to take place. 
+
+\item[\code{upper}] 
+a vector of dimension 4 containing the upper limit for each of the bimodal GEV
+parameters where the search is going to take place. 
+
+\item[\code{method\_envstats}] 
+method to use in the egevd function from envstats package.
+
+\item[\code{deoptim.itermax}] 
+number of iterations in the deoptim step.
+
+\item[\code{optim.method}] 
+maximum number of interations when finding a good starting value for the optimization algorithm.
+
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Value}
+A list with components returned by the optim R function for which the 
+main values are
+\begin{ldescription}
+\item[\code{par}] best parameters of bimodal gev fitting the data
+\item[\code{value}] value of the log-likelihood corresponding to 'par'
+\end{ldescription}
+\end{Value}
+%
+\begin{Author}
+Cira Otiniano Author [aut],
+  Yasmin Lirio Author [aut],
+  Thiago Sousa Developer [cre]
+\end{Author}
+%
+\begin{References}
+OTINIANO, Cira EG, et al. (2023). A bimodal model for extremes data. Environmental and Ecological Statistics, 1-28. http://dx.doi.org/10.1007/s10651-023-00566-7
+\end{References}
+%
+\begin{Examples}
+\begin{ExampleCode}
+# generate 100 values distributed according to a bimodal GEV
+x = rbgev(50, mu = 0.2, sigma = 1, xi = 0.5, delta = 0.2) 
+# estimate the bimodal GEV parameters using the generated data
+bgev.mle(x)
+\end{ExampleCode}
+\end{Examples}
+\HeaderA{bgev.support}{Support of the bimodal GEV distribution}{bgev.support}
+\keyword{bgev}{bgev.support}
+\keyword{gev}{bgev.support}
+\keyword{bimodal}{bgev.support}
+\keyword{support}{bgev.support}
+%
+\begin{Description}
+When the shape parameter \code{xi} is different from zero, the support
+is truncated either at the left or at the right side of the real. 
+Considering the support is particularly useful to estimating momoments and 
+to compute the likelihood function.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+bgev.support(mu, sigma, xi, delta)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{mu}] 
+location parameter
+
+\item[\code{sigma}] 
+shape parameter
+
+\item[\code{xi}] 
+shape parameter
+
+\item[\code{delta}] 
+bimodality parameter
+
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Value}
+It returns a vector representing the interval for which the density function 
+is not null. 
+\end{Value}
+%
+\begin{Note}
+The Support of the bimodal GEV distribution is given by the following equation:
+
+\deqn{
+    \begin{cases}
+     x \in \mathbb {R} : x \geq \mathbf{sng} \left(-\frac{\sigma}{\xi}\right) | \frac{\sigma}{\xi}| ^{\frac{1}{\delta+1}}+\mu, &  \xi \neq 0 \\
+     x \in \mathbb {R}, & \xi =0.
+    \end{cases}
+}{}
+
+
+\end{Note}
+%
+\begin{Author}
+Cira Otiniano Author [aut],
+  Yasmin Lirio Author [aut],
+  Thiago Sousa Developer [cre]
+\end{Author}
+%
+\begin{References}
+Otiniano, Cira EG, et al. (2023). A bimodal model for extremes data. Environmental and Ecological Statistics, 1-28. http://dx.doi.org/10.1007/s10651-023-00566-7
+\end{References}
+%
+\begin{Examples}
+\begin{ExampleCode}
+# Computes the support of a specific bimodal GEV distribution
+support = bgev.support(mu=1, sigma=10, xi=0.3, delta=2)
+\end{ExampleCode}
+\end{Examples}
+\HeaderA{distCheck}{Check implementation of a distribution in \R{}{}. }{distCheck}
+\keyword{distribution}{distCheck}
+\keyword{test}{distCheck}
+\keyword{implementation}{distCheck}
+%
+\begin{Description}
+This is just a refactorization of 
+the original \R{} function \code{distCheck} to allow customization for heavy tailed distributions
+and distribution with constrained support. Assumes one has implemented density, 
+probability, quantile and random generation for a new distribution. 
+Originally implemented to be used with the bimodal GEV distribution
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+distCheck(fun = "norm", n = 1000, robust = FALSE, subdivisions = 1500, 
+support.lower = -Inf, support.upper = Inf, 
+var.exists = TRUE, print.result = TRUE, ...)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{fun}] 
+Name of distribution. E.g, "bgev" for bimodal GEV, "gev" for GEV, "norm" for normal. 
+
+\item[\code{n}] 
+size of the sample when generating random values through "rfun"
+
+\item[\code{robust}] 
+Boolean. Used for computing mean and variance in a robust way when evaluating mean 
+and variance.
+
+\item[\code{subdivisions}] 
+used for numerical integration when using "dfun"
+
+\item[\code{support.lower}] 
+lower limit of the support of the distribution
+
+\item[\code{support.upper}] 
+upper limit of the support of the distribution
+
+\item[\code{var.exists}] 
+Boolean indicating if variance exists (useful for gev, bimodal gev, stable etc)
+
+\item[\code{print.result}] 
+Boolean indicating weather to print results of the tests on screen.
+
+\item[\code{...}] 
+parameters passed to the distribution, e.g., mu and sd for normal, mu, sigma, xi
+and delta for bimodal GEV.
+
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Details}
+All tests results are organized into a list to make it easier to find where 
+results went wrong and to make it scalable for testing distributions for 
+several parameters. 
+\end{Details}
+%
+\begin{Value}
+A list of lists with test results
+
+
+\code{list( functionTested = fun,
+              functionParam = list(...),}\\{}
+\code{test1.density =      list(computed = NULL, expected = NULL, error.check = NULL),}\\{}
+\code{test2.quantile.cdf = list(computed = NULL, expected = NULL, error.check = NULL),}\\{}
+\code{test3.mean.var =     list(computed = list(mean = NULL, var = NULL, log = NULL), }\\{}
+\code{ expected = list(mean = NULL, var = NULL, log = NULL),}\\{}
+\code{  error.check = NULL, }\\{}
+\code{  condition.is.var.finite = TRUE))}
+\begin{ldescription}
+\item[\code{functionParam}] Additional parameters passed to the distribution with the ... argument
+\item[\code{test1.density}] results for the density function test. A list with the 'computed' value 
+using the density function and numerical integration, the 'expected' value (which is 1) and 
+the result of the 'error.check' comparing both values.
+\item[\code{test2.quantile.cdf}] results for the quantile function test. A list with the 'computed' value 
+using the quantile function at chosen probabilites on [0,1], the 'expected' value (which is 1) and 
+the result of the 'error.check' comparing both values.
+
+\item[\code{test3.mean.var}] results for the random generation and the density function. 
+A list with the 'computed' values using the random quantities (computes mean(X), variance(X) and E(log(abs(X))) where X follows
+the distribution being tested. The 'expected' is a list containing the same quantities computed using numerical integration
+
+\item[\code{error.check}] check if expected variance and computed variance are close enough.
+
+\item[\code{condition.is.var.finite}] For some distributions there are known conditions for the variance to be finite. This quantity
+is expected to be evaluated outside the DistCheck function and passed through the argument 'var.exists'.
+
+\end{ldescription}
+\end{Value}
+%
+\begin{Author}
+Cira Otiniano Author [aut],
+  Yasmin Lirio Author [aut],
+  Thiago Sousa Developer [cre]
+\end{Author}
+%
+\begin{References}
+Otiniano, Cira EG, et al. (2023). A bimodal model for extremes data. Environmental and Ecological Statistics, 1-28. http://dx.doi.org/10.1007/s10651-023-00566-7
+\end{References}
+%
+\begin{Examples}
+\begin{ExampleCode}
+# generate random values for the parameters and test the 
+# bimodal gev distribution implementation
+set.seed(1)
+mu = runif(1,-2,2)
+sigma = runif(1,0.1,2)
+xi = runif(1,0.3,0.9) * sign(runif(1,-1,1))
+delta = 1#runif(1,-0.6,2)
+support = bgev.support(mu, sigma, xi, delta)
+var.exists = ( xi != 0) & (xi < (delta + 1)/2)
+ret = distCheck(fun="bgev", n = 2000, 
+      support.lower = support[1], support.upper = support[2], 
+      subdivisions = 5000, mu = mu, sigma = sigma, xi = xi, 
+      delta = delta, var.exists = var.exists, print.result = TRUE)
+\end{ExampleCode}
+\end{Examples}
+\HeaderA{likbgev}{Log likelihood function for the bimodal GEV distribution.}{likbgev}
+\keyword{bgev}{likbgev}
+\keyword{gev}{likbgev}
+\keyword{bimodal}{likbgev}
+\keyword{likelihood}{likbgev}
+%
+\begin{Description}
+Uses the density function to evaluate the likelihood. This is useful for the
+'bgev.mle' function.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+likbgev(y, theta = c(1, 1, 0.3, 2))
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{y}] 
+a unidimensional vector containing the points to compute the log likelihood
+
+\item[\code{theta}] 
+bimodal GEV parameters as an ordered pair \code{theta = (mu,sigma,xi,delta)}
+
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Value}
+a unidimensional vector containing the computed log likelihood for \code{y}.
+\end{Value}
+%
+\begin{Author}
+Cira Otiniano Author [aut],
+  Yasmin Lirio Author [aut],
+  Thiago Sousa Developer [cre]
+\end{Author}
+%
+\begin{References}
+Otiniano, Cira EG, et al. (2023). A bimodal model for extremes data. Environmental and Ecological Statistics, 1-28. http://dx.doi.org/10.1007/s10651-023-00566-7
+\end{References}
+%
+\begin{Examples}
+\begin{ExampleCode}
+# get random points from bimodal GEV
+y = rbgev(100, mu = 1, sigma = 1, xi = 0.3, delta = 2)
+
+# compute log-likelihood
+likbgev (y, theta = c(1, 1, 0.3, 2)) 
+\end{ExampleCode}
+\end{Examples}
+\printindex{}
+\end{document}

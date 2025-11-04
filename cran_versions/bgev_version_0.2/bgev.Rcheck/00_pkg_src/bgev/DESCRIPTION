@@ -7,3 +7,9 @@ Authors@R: c(person("Cira Otiniano", "Author", role = "aut",email = "ciragotinia
 Depends: EnvStats, DEoptim, stats, MASS
 Description: Density, distribution function, quantile function random generation and estimation of bimodal GEV distribution given in Otiniano et al. (2023) <doi:10.1007/s10651-023-00566-7>. This new generalization of the well-known GEV (Generalized Extreme Value) distribution is useful for modeling heterogeneous bimodal data from different areas.
 License: GPL-3
+NeedsCompilation: no
+Packaged: 2025-11-04 03:20:12 UTC; thiago
+Author: Cira Otiniano Author [aut],
+  Yasmin Lirio Author [aut],
+  Thiago Sousa Developer [cre]
+Maintainer: Thiago Sousa Developer <thiagoestatistico@gmail.com>
