@@ -20,34 +20,19 @@ Type 'q()' to quit R.
 > pkgname <- "bgev"
 > source(file.path(R.home("share"), "R", "examples-header.R"))
 > options(warn = 1)
+> base::assign(".ExTimings", "bgev-Ex.timings", pos = 'CheckExEnv')
+> base::cat("name\tuser\tsystem\telapsed\n", file=base::get(".ExTimings", pos = 'CheckExEnv'))
+> base::assign(".format_ptime",
++ function(x) {
++   if(!is.na(x[4L])) x[1L] <- x[1L] + x[4L]
++   if(!is.na(x[5L])) x[2L] <- x[2L] + x[5L]
++   options(OutDec = '.')
++   format(x[1L:3L], digits = 7L)
++ },
++ pos = 'CheckExEnv')
+> 
+> ### * </HEADER>
 > library('bgev')
-Loading required package: EnvStats
-
-Attaching package: ‘EnvStats’
-
-The following objects are masked from ‘package:stats’:
-
-    predict, predict.lm
-
-The following object is masked from ‘package:base’:
-
-    print.default
-
-Loading required package: DEoptim
-Loading required package: parallel
-
-DEoptim package
-Differential Evolution algorithm in R
-Authors: D. Ardia, K. Mullen, B. Peterson and J. Ulrich
-
-Loading required package: MASS
-
-Attaching package: ‘MASS’
-
-The following object is masked from ‘package:EnvStats’:
-
-    boxcox
-
 > 
 > base::assign(".oldSearch", base::search(), pos = 'CheckExEnv')
 > base::assign(".old_wd", base::getwd(), pos = 'CheckExEnv')
@@ -57,6 +42,7 @@ The following object is masked from ‘package:EnvStats’:
 > 
 > flush(stderr()); flush(stdout())
 > 
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
 > ### Name: bgev-package
 > ### Title: Bimodal GEV Distribution with Location Parameter
 > ### Aliases: bgev-package bgev dbgev pbgev qbgev rbgev
@@ -88,12 +74,15 @@ $message
 > 
 > 
 > 
+> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+> base::cat("bgev-package", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
 > cleanEx()
 > nameEx("bgev.mle")
 > ### * bgev.mle
 > 
 > flush(stderr()); flush(stdout())
 > 
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
 > ### Name: bgev.mle
 > ### Title: Parameter estimation of bimodal GEV distribution based on real
 > ###   data that appears to be bimodal.
@@ -126,12 +115,15 @@ $message
 > 
 > 
 > 
+> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+> base::cat("bgev.mle", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
 > cleanEx()
 > nameEx("bgev.support")
 > ### * bgev.support
 > 
 > flush(stderr()); flush(stdout())
 > 
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
 > ### Name: bgev.support
 > ### Title: Support of the bimodal GEV distribution
 > ### Aliases: bgev.support
@@ -144,12 +136,15 @@ $message
 > 
 > 
 > 
+> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+> base::cat("bgev.support", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
 > cleanEx()
 > nameEx("distCheck")
 > ### * distCheck
 > 
 > flush(stderr()); flush(stdout())
 > 
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
 > ### Name: distCheck
 > ### Title: Check implementation of a distribution in R.
 > ### Aliases: distCheck
@@ -181,12 +176,15 @@ condition.is.var.finite
 > 
 > 
 > 
+> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+> base::cat("distCheck", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
 > cleanEx()
 > nameEx("likbgev")
 > ### * likbgev
 > 
 > flush(stderr()); flush(stdout())
 > 
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
 > ### Name: likbgev
 > ### Title: Log likelihood function for the bimodal GEV distribution.
 > ### Aliases: likbgev
@@ -203,12 +201,14 @@ condition.is.var.finite
 > 
 > 
 > 
+> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+> base::cat("likbgev", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
 > ### * <FOOTER>
 > ###
 > cleanEx()
 > options(digits = 7L)
 > base::cat("Time elapsed: ", proc.time() - base::get("ptime", pos = 'CheckExEnv'),"\n")
-Time elapsed:  2.684 0.05 2.738 0 0 
+Time elapsed:  2.711 0.055 2.77 0 0 
 > grDevices::dev.off()
 null device 
           1 

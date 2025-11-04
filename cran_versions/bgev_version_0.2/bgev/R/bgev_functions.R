@@ -29,7 +29,7 @@ dbgev <- function(y, mu = 1, sigma = 1, xi = 0.3, delta = 2){
   derivate_T <- (delta + 1)*(abs(y-mu)^delta)
   
   # Compute density points
-  pdf    <- dgevd(T, 0, scale=sigma, shape=-xi)*derivate_T # changed shape to -xi due to reparametrization
+  pdf    <- EnvStats::dgevd(T, 0, scale=sigma, shape=-xi)*derivate_T # changed shape to -xi due to reparametrization
   
   # Return Value
   pdf
@@ -53,7 +53,7 @@ pbgev <- function(y, mu = 1, sigma = 1, xi = 0.3, delta = 2){
   # Compute auxiliary variables:
   Ti      <- (y-mu)*(abs(y-mu)^delta)
   # Compute 
-  cdf    <- pgevd(Ti, location=0, scale=sigma, shape=-xi)   # changed shape to -xi due to reparametrization
+  cdf    <- EnvStats::pgevd(Ti, location=0, scale=sigma, shape=-xi)   # changed shape to -xi due to reparametrization
   # Return Value
   return(cdf)
 }
@@ -74,7 +74,7 @@ qbgev   <- function(p, mu = 1, sigma = 1, xi = 0.3, delta = 2){
            sigma <= 0  || delta <= -1")
   
   # Compute distribution points according to their sign
-  quantile <- sign(qgevd(p, 0, sigma, -xi))*(abs(qgevd(p, 0, sigma, -xi)))^(1/(delta + 1)) + mu    # changed shape to -xi due to reparametrization
+  quantile <- sign(EnvStats::qgevd(p, 0, sigma, -xi))*(abs(EnvStats::qgevd(p, 0, sigma, -xi)))^(1/(delta + 1)) + mu    # changed shape to -xi due to reparametrization
   # Return Value
   return(quantile)
 }
@@ -94,7 +94,7 @@ rbgev <- function(n, mu = 1, sigma = 1, xi = 0.3, delta = 2){
     stop("Failed to verify condition:
            sigma <= 0  || delta <= -1")
   # Compute auxiliary variables:
-  U <- runif(n)
+  U <- stats::runif(n)
   # Compute random numbers
   rnumber <- qbgev(U, mu, sigma, xi, delta)
   # Return Value
@@ -128,7 +128,7 @@ likbgev <- function(y, theta = c(1, 1, 0.3, 2)){
   T      <- (y-mu)*(abs(y-mu)^delta)
   derivate_T <- (delta + 1)*(abs(y-mu)^delta)
   # Compute density points
-  dbgevd <- dgevd(x = T, location = mu, scale = sigma, shape = -xi)*derivate_T
+  dbgevd <- EnvStats::dgevd(x = T, location = mu, scale = sigma, shape = -xi)*derivate_T
   # Log:
   logl <- sum(log(dbgev(y,mu, sigma, xi, delta)))
   return(logl)
@@ -160,7 +160,7 @@ bgev.mle <- function(x, lower = c(-3,0.1,-3,-0.9), upper = c(3,3,3,3),
       return(val)
   }
   # theta = mu,sigma,xi,delta, # DEoptim minimizes
-  starts = DEoptim(fn = likbgev2, lower, upper, control = DEoptim.control(itermax = itermax, trace = FALSE)) 
+  starts = DEoptim::DEoptim(fn = likbgev2, lower, upper, control = DEoptim.control(itermax = itermax, trace = FALSE)) 
 
   # second optimization step starting at the value returned by deoptim. Recall that optim minimizes
   esti <- optim(par = starts$optim$bestmem, fn = likbgev2, method="L-BFGS-B", lower = lower, upper = upper)
@@ -199,14 +199,13 @@ bgev.mle = function(x, method_envstats = "mle", deoptim.itermax = 200, optim.met
   if ( is.null(start) ){
   
     
-    fit_gev <- try( egevd(x = x, method = method_envstats) )
+    fit_gev <- try( EnvStats::egevd(x = x, method = method_envstats) )
     
     if ( inherits(fit_gev, "try-error") ) {
       message("I tried to get good starting values using egevd and it failed. Try using a different method for method_envstats, e.g, pwme. See the help of egevd for the available options.")
       return(NULL)
       }
     
-    fit_gev <- egevd(x = x, method = method_envstats)
     mu_start = fit_gev$parameters[1]
     sd_start = fit_gev$parameters[2]
     xi_start = -fit_gev$parameters[3]
@@ -227,11 +226,11 @@ bgev.mle = function(x, method_envstats = "mle", deoptim.itermax = 200, optim.met
   }
   
   # get more adequate starting for all bgev parameteres simutaneously using DEoptim
-  starts.DEoptim = DEoptim(fn = likbgev2, lower, upper, control = DEoptim.control(itermax = deoptim.itermax, 
+  starts.DEoptim = DEoptim::DEoptim(fn = likbgev2, lower, upper, control = DEoptim::DEoptim.control(itermax = deoptim.itermax, 
                                                                                   trace = FALSE))
   
   # use starting values starts.DEoptim to feed optim and optimize locally
-  esti <- optim(par = starts.DEoptim$optim$bestmem, fn = likbgev2, 
+  esti <- stats::optim(par = starts.DEoptim$optim$bestmem, fn = likbgev2, 
                 method = optim.method, lower = lower, upper = upper)
   
   # return

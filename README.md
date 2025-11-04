@@ -12,3 +12,16 @@ or for future versions of this package.
 
 
 
+# Advices for building the package 
+
+When using functions from other packages makesure to use them like DEoptim::DEoptim.control or stats::runif(n)
+and put them  in imports like 
+
+Imports:
+    EnvStats,
+    DEoptim,
+    stats,
+    MASS
+
+
+

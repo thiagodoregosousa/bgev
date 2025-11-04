@@ -67,7 +67,7 @@ distCheck = function (fun = "norm", n = 1000, robust = FALSE, subdivisions = 150
   rfun = match.fun(paste("r", fun, sep = ""))
   
   # test1.density
-  ret$test1.density$computed = integrate(dfun, lower = support.lower, upper = support.upper, subdivisions = subdivisions, 
+  ret$test1.density$computed = stats::integrate(dfun, lower = support.lower, upper = support.upper, subdivisions = subdivisions, 
                    stop.on.error = FALSE, ...)
   ret$test1.density$expected = 1
   ret$test1.density$error.check = (abs(ret$test1.density$computed[[1]] - 1) < 0.01)
@@ -76,7 +76,7 @@ distCheck = function (fun = "norm", n = 1000, robust = FALSE, subdivisions = 150
   p = c(0.001, 0.01, 0.1, 0.5, 0.9, 0.99, 0.999)
   ret$test2.quantile.cdf$computed = pfun(qfun(p, ...), ...)
   ret$test2.quantile.cdf$expected = p  
-  RMSE = sd(ret$test2.quantile.cdf$computed - ret$test2.quantile.cdf$expected)
+  RMSE = stats::sd(ret$test2.quantile.cdf$computed - ret$test2.quantile.cdf$expected)
   ret$test2.quantile.cdf$error.check = (abs(RMSE) < 1e-04)
   
   # test3.mean.var  
@@ -84,7 +84,7 @@ distCheck = function (fun = "norm", n = 1000, robust = FALSE, subdivisions = 150
   r = rfun(n = n, ...)
   if (!robust) {
     sample.mean = mean(r)
-    sample.var = var(r)
+    sample.var = stats::var(r)
     sample.log = mean(log(abs(r)))
   }
   else {
@@ -106,11 +106,11 @@ distCheck = function (fun = "norm", n = 1000, robust = FALSE, subdivisions = 150
   fun3 = function(x, ...) {
     log(abs(x)) * dfun(x, ...)
   }
-  exact.mean = integrate(fun1, lower = support.lower, upper = support.upper, subdivisions = subdivisions, 
+  exact.mean = stats::integrate(fun1, lower = support.lower, upper = support.upper, subdivisions = subdivisions, 
                    stop.on.error = FALSE, ...)
-  exact.second.moment = integrate(fun2, lower = support.lower, upper = support.upper, subdivisions = subdivisions, 
+  exact.second.moment = stats::integrate(fun2, lower = support.lower, upper = support.upper, subdivisions = subdivisions, 
                   stop.on.error = FALSE, ...)
-  exact.log.moment = integrate(fun3, lower = support.lower, upper = support.upper, subdivisions = subdivisions, 
+  exact.log.moment = stats::integrate(fun3, lower = support.lower, upper = support.upper, subdivisions = subdivisions, 
                                   stop.on.error = FALSE, ...)
 
   exact.var = exact.second.moment[[1]] - exact.mean[[1]]^2
