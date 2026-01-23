@@ -1,9 +1,0 @@
-bgev-package            Bimodal GEV Distribution with Location
-                        Parameter
-bgev.mle                Parameter estimation of bimodal GEV
-                        distribution based on real data that appears to
-                        be bimodal.
-bgev.support            Support of the bimodal GEV distribution
-distCheck               Check implementation of a distribution in R.
-likbgev                 Log likelihood function for the bimodal GEV
-                        distribution.
