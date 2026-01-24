@@ -1,136 +1,50 @@
-TODO 
+source("R/bgev_functions.R")
+library(SimDesign)
 
-
-
-
-
-
-
-
-
-source("R/mbev_dist.R")
-source("R/mbev_estimation.R")
-
-
-
-
-
-
-
-
-
-
-
-
-# create design
-library(tibble)
-library(dplyr)
-theta_tbl <- tibble(
-  theta_id = paste0("Theta", 1:6),
-  dep  = c(1,   1,   1/2,   1,   1,   1/2.5),
-  mu1    = c(0,   0,   0,   0,   0,   0),
-  sigma1 = c(1,   1,   1,   1,   1,   1),
-  xi1    = c(0.5, 0.5, 1,  -1,  0.5, 0),
-  delta1 = c(0,   0,   0,   1,   1,   0.8),
-  mu2    = c(0,   0,   0,   0,   0,   0),
-  sigma2 = c(1,   1,   1,   1,   1,   1),
-  xi2    = c(0.5, 0.5, 0,  -1,  0.5, 0),
-  delta2 = c(0,   1,   1,   2,   1,   9)
+Design = SimDesign::createDesign(
+  n = c(100, 500),
+  mu = c(-5, 5),
+  sigma = c(0.1, 5),
+  xi = c(0.1, 3),
+  delta = c(0, 3)
 )
-n_vals <- c(50, 100, 500)
-Design <- tidyr::crossing(
-  n = n_vals,
-  theta_tbl
-) %>%
-  select(
-    n, dep,
-    mu1, sigma1, xi1, delta1,
-    mu2, sigma2, xi2, delta2
-  )
-
-
-
 
 Generate <- function(condition, fixed_objects) {
-  dat <- with(condition, rmbev(n = n, mu1 = mu1, mu2 = mu2, delta1 = delta1, delta2 = delta2, sigma1 = sigma1, sigma2 = sigma2, xi1 = xi1, xi2 = xi2, dep = dep)  )
+  dat <- with(condition, rbgev(n = n, mu = mu, sigma = sigma, xi = xi, delta = delta)  )
   dat
 } 
+
 Analyse <- function(condition, dat, fixed_objects) {
-  est = mbev_estimation(dat)
+  est = bgev_mle(dat)
   if(est$value == 0)
-    return(rep(NA,9))
+    return(rep(NA,4))
   ret = as.vector(est$par)
-  names(ret) = c("mu1", "mu2", "delta1", "delta2", "sigma1", "sigma2", "xi1", "xi2", "dep") 
+  names(ret) = c("mu", "sigma", "xi", "delta")
   return(ret)
 }
 
-
-analysis <- function(condition, dat, fixed_objects) {
-  est <- mbev_estimation(dat)
-  
-  # detect degenerate / penalty solution
- # if (!is.finite(est$value) || est$value <= 0) {
-  #  return(rep(NA_real_, 9))  # one NA per estimand
-  #}
-  
-  c(
-    mu1 = est$par["mu1"],
-    mu2 = est$par["mu2"],
-    delta1 = est$par["delta1"],
-    delta2 = est$par["delta2"],
-    sigma1 = est$par["sigma1"],
-    sigma2 = est$par["sigma2"],
-    xi1 = est$par["xi1"],
-    xi2 = est$par["xi2"],
-    dep = est$par["dep"]
-  )
-}
-
-
-
-
-
-
 Summarise <- function(condition, results, fixed_objects) {
-  # assuming your Design object columns match these names)
-  true_mu1 <- condition$mu1
-  true_mu2 <- condition$mu2
-  true_delta1 <- condition$delta1
-  true_delta2 <- condition$delta2
-  true_sigma1 <- condition$sigma1
-  true_sigma2 <- condition$sigma2
-  true_xi1 <- condition$xi1
-  true_xi2 <- condition$xi2
-  true_dep <- condition$dep
+  # assuming your Design object columns match these names
+  true_mu <- condition$mu
+  true_sigma <- condition$sigma
+  true_xi <- condition$xi
+  true_delta <- condition$delta
   
   # Return a named vector of the summary statistics (bias and RMSE)
   ret <- c(
-    bias_mu1 = bias(results[, "mu1"], parameter = true_mu1),
-    bias_mu2 = bias(results[, "mu2"], parameter = true_mu2),
-    bias_delta1 = bias(results[, "delta1"], parameter = true_delta1),
-    bias_delta2 = bias(results[, "delta2"], parameter = true_delta2),
-    bias_sigma1 = bias(results[, "sigma1"], parameter = true_sigma1),
-    bias_sigma2 = bias(results[, "sigma2"], parameter = true_sigma2),  
-    bias_xi1 = bias(results[, "xi1"], parameter = true_xi1),
-    bias_xi2 = bias(results[, "xi2"], parameter = true_xi2),
-    bias_dep = bias(results[, "dep"], parameter = true_dep),
-    RMSE_mu1 = RMSE(results[, "mu1"], parameter = true_mu1),
-    RMSE_mu2 = RMSE(results[, "mu2"], parameter = true_mu2),
-    RMSE_delta1 = RMSE(results[, "delta1"], parameter = true_delta1),
-    RMSE_delta2 = RMSE(results[, "delta2"], parameter = true_delta2),
-    RMSE_sigma1 = RMSE(results[, "sigma1"], parameter = true_sigma1),
-    RMSE_sigma2 = RMSE(results[, "sigma2"], parameter = true_sigma2),  
-    RMSE_xi1 = RMSE(results[, "xi1"], parameter = true_xi1),
-    RMSE_xi2 = RMSE(results[, "xi2"], parameter = true_xi2),
-    RMSE_dep = RMSE(results[, "dep"], parameter = true_dep) 
+    bias_mu = bias(results[, "mu"], parameter = true_mu),
+    bias_sigma = bias(results[, "sigma"], parameter = true_sigma),
+    bias_xi = bias(results[, "xi"], parameter = true_xi),
+    bias_delta = bias(results[, "delta"], parameter = true_delta),
+    RMSE_mu = RMSE(results[, "mu"], parameter = true_mu),
+    RMSE_sigma = RMSE(results[, "sigma"], parameter = true_sigma),
+    RMSE_xi = RMSE(results[, "xi"], parameter = true_xi),
+    RMSE_delta = RMSE(results[, "delta"], parameter = true_delta) 
   )
-  
   return(ret)
 }
-
-Design2 = Design[c(6,12,18),]
-Final <- SimDesign::runSimulation(design=Design2, replications=500,
+Design = Design[7:10, ]
+monte_carlo_results <- SimDesign::runSimulation(design=Design, replications=5,
                                   generate=Generate, analyse=Analyse, summarise=Summarise,
                                   progress = FALSE, verbose = FALSE)
-
-t(Final)  # see results
+t(monte_carlo_results)

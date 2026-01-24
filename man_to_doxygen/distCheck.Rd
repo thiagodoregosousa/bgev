@@ -97,7 +97,7 @@ mu = runif(1,-2,2)
 sigma = runif(1,0.1,2)
 xi = runif(1,0.3,0.9) * sign(runif(1,-1,1))
 delta = 1#runif(1,-0.6,2)
-support = bgev.support(mu, sigma, xi, delta)
+support = bgev_support(mu, sigma, xi, delta)
 var.exists = ( xi != 0) & (xi < (delta + 1)/2)
 ret = distCheck(fun="bgev", n = 2000, 
       support.lower = support[1], support.upper = support[2], 

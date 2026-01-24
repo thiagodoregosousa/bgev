@@ -44,11 +44,11 @@ ebgevBOOTSTRAP_FUTURE <- function( x, brep, mu = 1, sigma = 1, xi = 0.3, delta =
   for(k in (1:brep)){
     i <- sample(1:n, size = n, replace = TRUE)
     Z <- x[i]
-    while(show_condition(suppressWarnings(optim(par= starts, fn = likbgev, y=Z, method="BFGS")))[1]=="error"){
+    while(show_condition(suppressWarnings(optim(par= starts, fn = bgev_log_likelihood, y=Z, method="BFGS")))[1]=="error"){
       Z <- x[i]
     }
     
-    esti <- optim(par= starts, fn = likbgev, y=Z, method="BFGS")
+    esti <- optim(par= starts, fn = bgev_log_likelihood, y=Z, method="BFGS")
     
     
     muhat[k]       <- esti$par[1]

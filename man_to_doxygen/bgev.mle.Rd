@@ -1,5 +1,5 @@
-\name{bgev.mle}
-\alias{bgev.mle}
+\name{bgev_mle}
+\alias{bgev_mle}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
 Parameter estimation of bimodal GEV distribution based on real data 
@@ -21,7 +21,7 @@ parameters simutaneously.
 
 }
 \usage{
-bgev.mle(x, method_envstats = "mle", deoptim.itermax = 200, 
+bgev_mle(x, method_envstats = "mle", deoptim.itermax = 200, 
 optim.method = "L-BFGS-B",start = NULL, lower = NULL, upper = NULL) 
 }
 %- maybe also 'usage' for other objects documented here.
@@ -69,7 +69,7 @@ OTINIANO, Cira EG, et al. (2023). A bimodal model for extremes data. Environment
 # generate 100 values distributed according to a bimodal GEV
 x = rbgev(50, mu = 0.2, sigma = 1, xi = 0.5, delta = 0.2) 
 # estimate the bimodal GEV parameters using the generated data
-bgev.mle(x)
+bgev_mle(x)
 }
 \keyword{ bgev }
 \keyword{ gev }
