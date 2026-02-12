@@ -70,15 +70,18 @@ dbgev <- function(x, mu = 1, sigma = 1, xi = 0.3, delta = 2){
 
   pdf = rep(0, length(x))
   inside_support_indexes = setdiff(1:length(x), out_of_support_indexes)
+  
+  if(length(inside_support_indexes) == 0)
+    return(pdf)
 
   x_in = x[inside_support_indexes]
 
   # Compute auxiliary variables:
-  T      <- (x_in-mu)*(abs(x_in-mu)^delta)
-  derivate_T <- (delta + 1)*(abs(x_in-mu)^delta)
+  T_val      <- (x_in-mu)*(abs(x_in-mu)^delta)
+  derivate_T_val <- (delta + 1)*(abs(x_in-mu)^delta)
 
   # Compute density points
-  pdf_x_in    <- EnvStats::dgevd(T, 0, scale=sigma, shape=-xi)*derivate_T # changed shape to -xi due to reparametrization
+  pdf_x_in    <- EnvStats::dgevd(T_val, 0, scale=sigma, shape=-xi)*derivate_T_val # changed shape to -xi due to reparametrization
   
   # Return Value
   pdf[inside_support_indexes] = pdf_x_in

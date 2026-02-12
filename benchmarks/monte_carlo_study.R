@@ -2,6 +2,11 @@ source("R/bgev_domain.R")
 source("R/bgev_distribution.R")
 source("R/bgev_estimation.R")
 
+pars = c(0,1,3,9)
+x = rbgev(n = 100, mu = pars[1], sigma = pars[2], xi = pars[3], delta = pars[4])
+rbind(pars, bgev_mle(x)$par, bgev_estimation_start(x), start_quantile(x))
+tmp = start_quantile(x)
+tmp$
 library(SimDesign)
 
 Design = SimDesign::createDesign(
