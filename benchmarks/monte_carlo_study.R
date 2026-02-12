@@ -1,12 +1,15 @@
-source("R/bgev_functions.R")
+source("R/bgev_domain.R")
+source("R/bgev_distribution.R")
+source("R/bgev_estimation.R")
+
 library(SimDesign)
 
 Design = SimDesign::createDesign(
   n = c(100, 500),
-  mu = c(-5, 5),
-  sigma = c(0.1, 5),
-  xi = c(0.1, 3),
-  delta = c(0, 3)
+  mu = c(0),
+  sigma = c(1),
+  xi = c(0),
+  delta = c(9)
 )
 
 Generate <- function(condition, fixed_objects) {
@@ -43,8 +46,11 @@ Summarise <- function(condition, results, fixed_objects) {
   )
   return(ret)
 }
-Design = Design[7:10, ]
+Design = Design[9:10, ]
 monte_carlo_results <- SimDesign::runSimulation(design=Design, replications=5,
                                   generate=Generate, analyse=Analyse, summarise=Summarise,
                                   progress = FALSE, verbose = FALSE)
 t(monte_carlo_results)
+
+
+

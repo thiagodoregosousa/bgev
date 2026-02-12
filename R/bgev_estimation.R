@@ -2,6 +2,8 @@
 #'
 #' @param x Numeric vector of observations.
 #' @param theta Vector of parameters (mu, sigma, xi, delta). See \link{bgev}.
+#' 
+#' @author Thiago do Rego Sousa and Yasmin Lirio
 #'
 #' @return The log-likelihood value.
 #' @export 
@@ -29,56 +31,47 @@ bgev_log_likelihood <- function(x, theta = c(1, 1, 0.3, 2)){
 #' @param lower Optional vector of lower bounds for the parameters (mu, sigma, xi, delta).
 #' @param upper Optional vector of upper bounds for the parameters (mu, sigma, xi, delta).
 #' 
+#' @author Thiago do Rego Sousa and Yasmin Lirio
+#' 
 #' @note lower and upper should be provided together.
-bgev_mle = function(x, method_envstats = "mle", deoptim.itermax = 200, optim.method = "L-BFGS-B",
-                    start = NULL, lower = NULL, upper = NULL) 
+bgev_mle <- function (x, method_envstats = "mle", deoptim.itermax = 200, 
+          optim.method = "L-BFGS-B", start = NULL, lower = NULL, upper = NULL, verbose = FALSE) 
 {
-
-  # Step1: get reasonable starting values using a genetic algorithm 
-  bgev_log_likelihood2 = function(theta) {
-    val = -bgev_log_likelihood(x, theta)
-    if (val == Inf)
+  likbgev2 = function(theta) {
+    val = -likbgev(x, theta)
+    if (!is.finite(val)) 
       return(1e+100)
     else return(val)
   }
-  
-  # let user provide start
-  if ( is.null(start) ){
-    
-    fit_gev <- try(EnvStats::egevd(x = x, method = "mle"))
-    
-    if ( inherits(fit_gev, "try-error") ) {
-      message("I tried to get good starting values using egevd and it failed. Try using a different method for method_envstats, e.g, pwme. See the help of egevd for the available options.")
-      return(NULL)
-      }
-    
+
+ # get lower and upper bounds if not provided 
+ if (is.null(lower) | is.null(upper)) {
+    fit_gev <- try(EnvStats::egevd(x = x, method = method_envstats))
+    if (inherits(fit_gev, "try-error")) {
+      if(verbose)
+        message("I tried to get good starting values using egevd and it failed. Try using a different method for method_envstats, e.g, pwme. See the help of egevd for the available options.")
+      fit_gev <- try(EnvStats::egevd(x = x, method = "pwme"))
+      #return(NULL)
+    }
     mu_start = fit_gev$parameters[1]
     sd_start = fit_gev$parameters[2]
     xi_start = -fit_gev$parameters[3]
-    
-    starts = c(mu_start, sd_start, xi_start, 0.1)
     xi_min = xi_start/5
-    xi_max = xi_start*5
-    if(xi_start < 0){
+    xi_max = xi_start * 5
+    if (xi_start < 0) {
       xi_max = xi_start/5
-      xi_min = xi_start*5
+      xi_min = xi_start * 5
     }
+    lower = c(mu_start - 2 * sd_start, sd_start/5, xi_min, 
+              -0.99)
+    upper = c(mu_start + 2 * sd_start, 5 * sd_start, xi_max, 
+              20)
   }
-  
-  # let user provide lower and upper
-  if ( is.null(lower) | is.null(upper) ){
-  lower = c(mu_start - 2*sd_start, sd_start/5, xi_min,-0.99)
-  upper = c(mu_start + 2*sd_start, 5*sd_start, xi_max,5)
-  }
-  
-  # get more adequate starting for all bgev parameteres simutaneously using DEoptim
-  starts.DEoptim = DEoptim::DEoptim(fn = bgev_log_likelihood2, lower, upper, control = DEoptim::DEoptim.control(itermax = deoptim.itermax, 
-                                                                                  trace = FALSE))
-  
-  # use starting values starts.DEoptim to feed optim and optimize locally
-  esti <- stats::optim(par = starts.DEoptim$optim$bestmem, fn = bgev_log_likelihood2, 
-                method = optim.method, lower = lower, upper = upper)
-  
-  # return
+  starts.DEoptim = DEoptim::DEoptim(fn = likbgev2, lower, upper, 
+                                    control = DEoptim::DEoptim.control(itermax = deoptim.itermax, 
+                                                                       trace = FALSE))
+  esti <- stats::optim(par = starts.DEoptim$optim$bestmem, 
+                       fn = likbgev2, method = optim.method, lower = lower, 
+                       upper = upper)
   esti
 }

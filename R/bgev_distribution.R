@@ -30,8 +30,6 @@
 #' BGEV distribution is equivalent to the GEV distribution when \code{delta = 0}. 
 #' When comparing BGEV with GEV from package EnvStats, the \code{shape} parameter of GEV
 #' is changed to \code{-xi} due to reparametrization
-#' 
-#' 
 #'
 #' @references
 #' Otiniano, Cira E. G., et al. (2023).
@@ -39,7 +37,7 @@
 #' Environmental and Ecological Statistics, 1–28.
 #' \doi{10.1007/s10651-023-00566-7}
 #'
-#' @author Thiago do Rego Sousa
+#' @author Thiago do Rego Sousa and Yasmin Lirio
 #'
 #' @examples
 #' par(mfrow = c(2, 2))

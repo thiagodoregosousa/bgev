@@ -9,6 +9,8 @@
 #' @param xi shape parameter in R
 #' @param delta shape parameter (delta > -1)
 #' 
+#' #' @author Thiago do Rego Sousa
+#' 
 #' @return A vector of length 2 with the lower and upper limits of the support
 #' 
 #' @details It returns values with \code{-Inf} or \code{Inf} when the support is unbounded. 
@@ -32,6 +34,9 @@ bgev_support = function(mu = 1, sigma = 1, xi = 0.3, delta = 2){
 #' Check if the provided parameters for the BGEV distribution are valid.
 #' 
 #' @param \link{bgev} Parameters of the BGEV distribution as in \link{bgev}
+#' 
+#' @author Thiago do Rego Sousa
+#' 
 #' @export 
 bgev_valid_params = function(mu, sigma, xi, delta){
   if(sigma <= 0  || delta <= -1 )

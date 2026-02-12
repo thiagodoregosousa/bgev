@@ -1,54 +1,73 @@
-distCheck = function (fun = "norm", n = 1000, robust = FALSE, subdivisions = 1500, 
-                      support.lower = -Inf, support.upper = Inf, var.exists = TRUE, print.result = TRUE,
-                      ...) 
-{
-  # ============= 
-  # FUNCTION:
-  # ============= 
-  # test implementation of continuous distributions in R using its naming convention
-  # Disclaimer: this function is just an adaptation of the R function fBasics::distCheck
-  # ============= 
-  # ARGUMENTS:
-  # ============= 
-  # fun: name of the function to be tested, e.g., "norm", "gev", "exp"
-  # n: size of the sample when generating random values through "rfun"
-  # robust: for computing mean and variance in a robust way when evaluating mean and variance
-  # subdivisions: used for numerical integration when using "dfun"
-  # support.lower and support.upper: lower and upper limit of the support of the distribution
-  # var.exists: Boolean indicating if variance exists (useful for gev, bimodal gev, stable etc)
-  # ============= 
-  # RETURN:
-  # ============= 
-  # A list containing values computed, expected and the report of checks comparing
-  # computed and expected values 
-  # ============= 
-  # DESCRIPTION: 
-  # ============= 
-  # to allow for custom distribution support and returning the test values 
-  # into an object for future use
-  # Description:
-  # Tests density, quantile, probability and random function (continuous distributions)
-  # 3 tests are done: 
-  # -------------
-  # test1.density
-  # -------------  
-  # test if the density function integrates out to 1. Notice here
-  # that it would be advisable giving better limiting lower and upper bounds
-  # for integration in case the function is not defined in some region, e.g., GEV or Bimodal GEV
-  # Bimodal GEV distribution.
-  # -------------
-  # test2.quantile.cdf
-  # -------------
-  # Sample moments using the RNG of the variable and comparing with 
-  # the value obtained from integrating the density. 
-  # CAREFULL FOR DISTRIBUTIONS WHICH DOES NOT HAVE WELL DEFINED FIRST AND/OR SECOND MOMENTS.
-  #   -------------
-  #   test3.mean.var
-  #   -------------
-  # compute mean and variance using integral of density and using "rfun" 
-  # and compare both at the end.
-  # ============= 
-  
+#' Consistency checks for continuous distribution implementations
+#'
+#' Tests whether a set of functions implementing a continuous distribution
+#' (density, distribution, quantile, and random generation) satisfy basic
+#' probabilistic consistency conditions under the standard R naming convention
+#' (\code{d*}, \code{p*}, \code{q*}, \code{r*}).
+#'
+#' This function is an adaptation of \code{fBasics::distCheck}, extended to
+#' allow for custom distribution support and to return all test results in a
+#' structured object for further inspection.
+#'
+#' @param fun Character string giving the name of the distribution (e.g.,
+#'   \code{"norm"}, \code{"gev"}, \code{"exp"}).
+#' @param n Sample size used when generating random values via the corresponding
+#'   \code{r*} function.
+#' @param robust Logical; if \code{TRUE}, mean and variance are computed using
+#'   robust estimators when applicable.
+#' @param subdivisions Number of subdivisions used for numerical integration
+#'   when evaluating the density function.
+#' @param support.lower Lower bound of the support of the distribution.
+#' @param support.upper Upper bound of the support of the distribution.
+#' @param var.exists Logical; indicates whether the variance of the distribution
+#'   exists (useful for GEV, bimodal GEV, stable distributions, etc.).
+#' @param print.result Logical; if \code{TRUE}, a summary of the test results
+#'   is printed.
+#' @param ... Additional parameters passed to the distribution functions.
+#'
+#' @details
+#' The following consistency checks are performed:
+#'
+#' \describe{
+#'   \item{Density check}{Tests whether the density integrates to one over the
+#'   specified support. For distributions with restricted support (e.g., GEV
+#'   or bimodal GEV), appropriate bounds should be supplied.}
+#'
+#'   \item{Quantile--CDF check}{Compares empirical quantiles obtained from random
+#'   generation with those implied by the cumulative distribution function.}
+#'
+#'   \item{Mean--variance check}{Computes mean and variance both from numerical
+#'   integration of the density and from simulated samples, and compares the two.
+#'   This check is skipped or flagged when moments are not finite.}
+#' }
+#'
+#' @return
+#' A list containing the computed values, theoretical expectations, and
+#' diagnostic information for each test.
+#'
+#' @author
+#' Thiago do Rego Sousa
+#'
+#' @seealso
+#' \code{\link[fBasics]{distCheck}}
+#'
+#' @examples
+#' \dontrun{
+#' distCheck("norm")
+#' distCheck("gev", xi = 0.2, sigma = 1, mu = 0,
+#'           support.lower = -5, support.upper = 10)
+#' }
+distCheck <- function(
+  fun = "norm",
+  n = 1000,
+  robust = FALSE,
+  subdivisions = 1500,
+  support.lower = -Inf,
+  support.upper = Inf,
+  var.exists = TRUE,
+  print.result = TRUE,
+  ...
+) {
   # construct object to return 
   ret = list( functionTested = fun,
               functionParam = list(...),
