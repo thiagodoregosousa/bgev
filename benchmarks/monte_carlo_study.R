@@ -2,19 +2,14 @@ source("R/bgev_domain.R")
 source("R/bgev_distribution.R")
 source("R/bgev_estimation.R")
 
-pars = c(0,1,3,9)
-x = rbgev(n = 100, mu = pars[1], sigma = pars[2], xi = pars[3], delta = pars[4])
-rbind(pars, bgev_mle(x)$par, bgev_estimation_start(x), start_quantile(x))
-tmp = start_quantile(x)
-tmp$
 library(SimDesign)
 
 Design = SimDesign::createDesign(
   n = c(100, 500),
   mu = c(0),
   sigma = c(1),
-  xi = c(0),
-  delta = c(9)
+  xi = c(-1,0,1),
+  delta = c(0,1,9)
 )
 
 Generate <- function(condition, fixed_objects) {
@@ -23,13 +18,22 @@ Generate <- function(condition, fixed_objects) {
 } 
 
 Analyse <- function(condition, dat, fixed_objects) {
-  est = bgev_mle(dat)
-  if(est$value == 0)
-    return(rep(NA,4))
-  ret = as.vector(est$par)
-  names(ret) = c("mu", "sigma", "xi", "delta")
+
+  ret_error <- rep(NA_real_, 4)
+  names(ret_error) <- c("mu", "sigma", "xi", "delta")
+  est <- tryCatch(bgev_mle(dat, control = DEoptim::DEoptim.control(itermax = 100, NP = 100, trace = FALSE)), error = function(e) NULL)
+  if(is.null(est))
+    return(ret_error)
+  if (is.null(est$optim$bestmem) ||
+      length(est$optim$bestmem) != 4 ||
+      any(!is.finite(est$optim$bestmem))) {
+    return(ret_error)
+  }
+  ret <- as.numeric(est$optim$bestmem)
+  names(ret) <- c("mu", "sigma", "xi", "delta")
   return(ret)
 }
+
 
 Summarise <- function(condition, results, fixed_objects) {
   # assuming your Design object columns match these names
@@ -51,11 +55,10 @@ Summarise <- function(condition, results, fixed_objects) {
   )
   return(ret)
 }
-Design = Design[9:10, ]
-monte_carlo_results <- SimDesign::runSimulation(design=Design, replications=5,
+
+monte_carlo_results <- SimDesign::runSimulation(design=Design, replications=500,
                                   generate=Generate, analyse=Analyse, summarise=Summarise,
-                                  progress = FALSE, verbose = FALSE)
-t(monte_carlo_results)
+                                  progress = FALSE, verbose = FALSE, store_results = TRUE, 
+                                  parallel = TRUE, ncores = 7, save_results = TRUE)
 
-
-
+saveRDS(object = monte_carlo_results, file = "benchmarks/itermax_100_NP_100_replications_500.rds")
