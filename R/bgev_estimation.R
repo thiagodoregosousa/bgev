@@ -7,20 +7,26 @@
 #'
 #' @return The log-likelihood value.
 #' @export 
-bgev_log_likelihood <- function(x, pars = c(1, 1, 0.3, 2)){
-
-  mu      <- pars[1]
-  sigma   <- pars[2]
-  xi      <- pars[3]
-  delta   <- pars[4]
+bgev_log_likelihood <- function(x, pars) {
   
-  if(!bgev_valid_params(mu, sigma, xi, delta))
-    stop("Invalid parameters: sigma must be > 0 and delta must be > -1")
+  stopifnot(is.numeric(pars))
+  stopifnot(length(pars) == 4)
   
-  # Log-likelihood:
-  logl <- sum(log(dbgev(x,mu, sigma, xi, delta)))
-  return(logl)
+  pars <- setNames(pars, c("mu", "sigma", "xi", "delta"))
+  
+  mu    <- pars["mu"]
+  sigma <- pars["sigma"]
+  xi    <- pars["xi"]
+  delta <- pars["delta"]
+  
+  if (!bgev_valid_params(mu, sigma, xi, delta))
+    stop("Invalid parameters: sigma > 0 and delta > -1")
+  
+  sum(log(dbgev(x, mu, sigma, xi, delta)))
 }
+
+
+
 
 
 #' Maximum Likelihood Estimation for the BGEV distribution
@@ -32,8 +38,8 @@ bgev_log_likelihood <- function(x, pars = c(1, 1, 0.3, 2)){
 #' 
 #' @author Thiago do Rego Sousa and Yasmin Lirio
 #' 
-bgev_mle <- function (x, lower = c(-12,0.01,-0.99,-12), upper = c(12,12,12,12), 
-                       control = DEoptim::DEoptim.control(itermax = 20, NP = 100, trace = FALSE), 
+bgev_mle <- function (x, lower = c(-12,0.01,-12,-0.99), upper = c(12,12,12,12), 
+                       control = DEoptim::DEoptim.control(itermax = 100, NP = 100, trace = FALSE), 
                        DEoptim_replicates = 5) 
 {
   if (is.null(x) || anyNA(x)) {
