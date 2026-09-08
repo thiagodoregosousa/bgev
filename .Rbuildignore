@@ -1,0 +1,4 @@
+tests/*
+benchmarks/*
+man_to_doxygen/*
+to_be_implemented/*
