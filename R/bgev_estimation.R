@@ -32,12 +32,26 @@ bgev_log_likelihood <- function(x, pars) {
 #' Maximum Likelihood Estimation for the BGEV distribution
 #' 
 #' @param x Numeric vector of observations.
-#' @param control List of type DEoptim::DEoptim.control (PUT LINK HERE)
 #' @param lower Optional vector of lower bounds for the parameters (mu, sigma, xi, delta).
 #' @param upper Optional vector of upper bounds for the parameters (mu, sigma, xi, delta).
+#' @param control List of control parameters, as returned by \link[DEoptim]{DEoptim.control}.
+#' @param DEoptim_replicates Number of independent DEoptim runs; the run with the
+#'   best (highest) log-likelihood is returned.
+#' 
+#' @return The \link[DEoptim]{DEoptim} result for the best-performing replicate:
+#'   a list with \code{optim$bestmem} (the estimated \code{c(mu, sigma, xi, delta)})
+#'   and \code{optim$bestval} (the negative log-likelihood at that estimate).
 #' 
 #' @author Thiago do Rego Sousa and Yasmin Lirio
 #' 
+#' @examples
+#' \donttest{
+#' set.seed(1)
+#' x <- rbgev(n = 200, mu = 1, sigma = 1, xi = 1, delta = 1)
+#' fit <- bgev_mle(x, control = DEoptim::DEoptim.control(itermax = 20, NP = 40, trace = FALSE))
+#' fit$optim$bestmem
+#' }
+#' @export
 bgev_mle <- function (x, lower = c(-12,0.01,-12,-0.99), upper = c(12,12,12,12), 
                        control = DEoptim::DEoptim.control(itermax = 100, NP = 100, trace = FALSE), 
                        DEoptim_replicates = 5) 

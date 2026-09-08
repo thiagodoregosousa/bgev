@@ -9,7 +9,7 @@
 #' @param xi shape parameter in R
 #' @param delta shape parameter (delta > -1)
 #' 
-#' #' @author Thiago do Rego Sousa
+#' @author Thiago do Rego Sousa
 #' 
 #' @return A vector of length 2 with the lower and upper limits of the support
 #' 
@@ -18,6 +18,8 @@
 #' is truncated either at the left or at the right side of the real. 
 #' Considering the support is particularly useful to estimating momoments and 
 #' to compute the likelihood function.
+#' 
+#' @export
 bgev_support = function(mu = 1, sigma = 1, xi = 0.3, delta = 2){
   support_lower = -Inf
   support_upper = Inf

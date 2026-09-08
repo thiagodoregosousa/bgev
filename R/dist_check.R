@@ -51,6 +51,8 @@
 #' @seealso
 #' \code{\link[fBasics]{distCheck}}
 #'
+#' @keywords internal
+#'
 #' @examples
 #' \dontrun{
 #' distCheck("norm")

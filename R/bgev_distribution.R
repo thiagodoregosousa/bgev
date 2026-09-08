@@ -8,7 +8,7 @@
 #'
 #' @name bgev
 #' @rdname bgev
-#' @aliases bgev dbgev pbgev qbgev rbgev bgev_support
+#' @aliases bgev dbgev pbgev qbgev rbgev
 #'
 #' @param x Numeric vector of values for calculating density. 
 #' @param q Numeric vector of quantiles.
