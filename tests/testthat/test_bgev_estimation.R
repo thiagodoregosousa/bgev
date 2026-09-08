@@ -123,4 +123,20 @@ test_that("replicates improve or match solution", {
 
 
 
+test_that("bgev_start_using_quantiles returns vector of size 4 for arbitrary input", {
+  set.seed(1)
+  x <- rnorm(200)
+  res = bgev_start_using_quantiles
+  
+  r1 <- bgev_mle(x, DEoptim_replicates = 1)
+  r5 <- bgev_mle(x, DEoptim_replicates = 5)
+  
+  expect_equal(length(res), 4)
+})
+
+
+
+
+
+
 
