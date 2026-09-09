@@ -6,6 +6,7 @@
 #' @author Thiago do Rego Sousa and Yasmin Lirio
 #'
 #' @return The log-likelihood value.
+#' @importFrom stats setNames
 #' @export 
 bgev_log_likelihood <- function(x, pars) {
   

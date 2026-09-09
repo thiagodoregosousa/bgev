@@ -9,6 +9,12 @@
 \title{Bimodal GEV (generalized extreme value) distribution}
 \usage{
 dbgev(x, mu = 1, sigma = 1, xi = 0.3, delta = 2)
+
+pbgev(q, mu = 1, sigma = 1, xi = 0.3, delta = 2)
+
+qbgev(p, mu = 1, sigma = 1, xi = 0.3, delta = 2)
+
+rbgev(n, mu = 1, sigma = 1, xi = 0.3, delta = 2)
 }
 \arguments{
 \item{x}{Numeric vector of values for calculating density.}
@@ -26,8 +32,6 @@ dbgev(x, mu = 1, sigma = 1, xi = 0.3, delta = 2)
 \item{p}{Numeric vector of probabilities.}
 
 \item{n}{Number of observations for random generation.}
-
-\item{log}{Logical; if \code{TRUE}, densities are returned on the log scale.}
 }
 \value{
 \item{dbgev}{density values}

@@ -37,6 +37,7 @@ mc_estimator <- function(n, R, mu, sigma, xi, delta) {
 #' @param x Numeric vector of observations.
 #' @return starts_DEoptim start values for the estimation of (mu,sigma,xi,delta)
 #' @author Thiago do Rego Sousa
+#' @importFrom stats mad median quantile sd
 bgev_start_using_quantiles = function(x){
   quantile_error <- function(theta){
     mu  <- theta[1]

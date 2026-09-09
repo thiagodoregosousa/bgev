@@ -1,3 +1,6 @@
 benchmarks/*
-man_to_doxygen/*
 to_be_implemented/*
+data/*
+^\.claude$
+^CLAUDE\.md$
+^Todo\.md$

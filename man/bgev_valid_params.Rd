@@ -7,7 +7,13 @@
 bgev_valid_params(mu, sigma, xi, delta)
 }
 \arguments{
-\item{\link{bgev}}{Parameters of the BGEV distribution as in \link{bgev}}
+\item{mu}{location parameter, as in \link{bgev}}
+
+\item{sigma}{scale parameter (sigma > 0), as in \link{bgev}}
+
+\item{xi}{shape parameter in R, as in \link{bgev}}
+
+\item{delta}{shape parameter (delta > -1), as in \link{bgev}}
 }
 \description{
 Check if the provided parameters for the BGEV distribution are valid.

@@ -35,7 +35,10 @@ bgev_support = function(mu = 1, sigma = 1, xi = 0.3, delta = 2){
 #' 
 #' Check if the provided parameters for the BGEV distribution are valid.
 #' 
-#' @param \link{bgev} Parameters of the BGEV distribution as in \link{bgev}
+#' @param mu location parameter, as in \link{bgev}
+#' @param sigma scale parameter (sigma > 0), as in \link{bgev}
+#' @param xi shape parameter in R, as in \link{bgev}
+#' @param delta shape parameter (delta > -1), as in \link{bgev}
 #' 
 #' @author Thiago do Rego Sousa
 #' 
