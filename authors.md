@@ -11,7 +11,7 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/thiagodoregosousa/bgev/blob/feature/pkgdown-site/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/thiagodoregosousa/bgev/blob/main/DESCRIPTION)
 
 Author C, Author Y (2026). *bgev: Bimodal GEV Distribution with Location
 Parameter*. R package version 0.3,
