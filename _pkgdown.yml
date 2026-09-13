@@ -17,6 +17,7 @@ reference:
   contents:
   - bgev_mle
   - bgev_log_likelihood
+  - bgev_start_using_quantiles
 
 - title: Support & validity
   desc: Parameter checks and support of the distribution.
