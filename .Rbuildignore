@@ -1,0 +1,6 @@
+benchmarks/*
+to_be_implemented/*
+data/*
+^\.claude$
+^CLAUDE\.md$
+^Todo\.md$

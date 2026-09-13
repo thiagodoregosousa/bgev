@@ -8,7 +8,7 @@
 #'
 #' @name bgev
 #' @rdname bgev
-#' @aliases bgev dbgev pbgev qbgev rbgev bgev_support
+#' @aliases bgev dbgev pbgev qbgev rbgev
 #'
 #' @param x Numeric vector of values for calculating density. 
 #' @param q Numeric vector of quantiles.
@@ -18,7 +18,6 @@
 #' @param sigma scale parameter (sigma > 0)
 #' @param xi shape parameter in R
 #' @param delta shape parameter (delta > -1)
-#' @param log Logical; if \code{TRUE}, densities are returned on the log scale.
 #'
 #' @return
 #' \item{dbgev}{density values}
@@ -89,6 +88,7 @@ dbgev <- function(x, mu = 1, sigma = 1, xi = 0.3, delta = 2){
 }
 
 
+#' @rdname bgev
 #' @export
 pbgev <- function(q, mu = 1, sigma = 1, xi = 0.3, delta = 2){ 
 
@@ -102,6 +102,7 @@ pbgev <- function(q, mu = 1, sigma = 1, xi = 0.3, delta = 2){
 }
 
 
+#' @rdname bgev
 #' @export
 qbgev   <- function(p, mu = 1, sigma = 1, xi = 0.3, delta = 2){
   if(!bgev_valid_params(mu, sigma, xi, delta))
@@ -113,6 +114,7 @@ qbgev   <- function(p, mu = 1, sigma = 1, xi = 0.3, delta = 2){
 }
 
 
+#' @rdname bgev
 #' @export 
 rbgev <- function(n, mu = 1, sigma = 1, xi = 0.3, delta = 2){
   # DESCRIPTION:

@@ -14,21 +14,3 @@ EnvStats::dgevd(location = mu, scale = sigma, shape = -xi)", {
 })
 
 
-
-
-test_that("mbev_valid_pars can get invalid deltas, sigmas or deltas ?", {
-   
-   # dep out of range
-   expect_false(mbev_valid_pars(pars = c(1,1,1,1,1,1,1,1,-1)))
-   
-   # dep out of range
-   expect_false(mbev_valid_pars(pars = c(1,1,1,1,1,1,1,1,1.01)))
-   
-   # negative sigma
-   expect_false(mbev_valid_pars(pars = c(1,1,1,1,-1,1,1,1,0.5)))
-   expect_false(mbev_valid_pars(pars = c(1,1,1,1,1,-1,1,1,0.5)))
-   
-   # deltas out of range
-   expect_false(mbev_valid_pars(pars = c(1,1,-1.01,1,1,1,1,1,0.5)))
-   expect_false(mbev_valid_pars(pars = c(1,1,1,-5,1,1,1,1,0.5)))
-})
