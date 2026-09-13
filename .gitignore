@@ -27,3 +27,9 @@ R/tests/testthat/_snaps/*
 .Rproj.user/
 .Rproj.user/*
 .Rproj
+
+# -------------------------
+# pkgdown
+# -------------------------
+docs/
+pkgdown/

@@ -4,3 +4,7 @@ data/*
 ^\.claude$
 ^CLAUDE\.md$
 ^Todo\.md$
+^docs$
+^pkgdown$
+^_pkgdown\.yml$
+^\.github$

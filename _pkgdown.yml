@@ -1,0 +1,25 @@
+url: https://thiagodoregosousa.github.io/bgev/
+
+template:
+  bootstrap: 5
+
+reference:
+- title: Distribution
+  desc: Density, distribution, quantile, and random generation for the bimodal GEV.
+  contents:
+  - dbgev
+  - pbgev
+  - qbgev
+  - rbgev
+
+- title: Estimation
+  desc: Maximum likelihood fitting and the underlying log-likelihood.
+  contents:
+  - bgev_mle
+  - bgev_log_likelihood
+
+- title: Support & validity
+  desc: Parameter checks and support of the distribution.
+  contents:
+  - bgev_valid_params
+  - bgev_support

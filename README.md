@@ -27,6 +27,21 @@ fit <- bgev_mle(x)
 fit$optim$bestmem
 ```
 
+## Functions
+
+| Function | Description |
+|---|---|
+| `dbgev()` | Density of the bimodal GEV distribution |
+| `pbgev()` | Distribution function |
+| `qbgev()` | Quantile function |
+| `rbgev()` | Random generation |
+| `bgev_mle()` | Maximum likelihood estimation of the four parameters |
+| `bgev_log_likelihood()` | Log-likelihood used by `bgev_mle()` |
+| `bgev_valid_params()` | Check whether a set of parameters is valid |
+| `bgev_support()` | Compute the support of the distribution for given parameters |
+
+See the [Reference](https://thiagodoregosousa.github.io/bgev/reference/index.html) page for full documentation.
+
 ## Package layout
 
 - `R/` — package source: distribution functions (`R/bgev_distribution.R`),
