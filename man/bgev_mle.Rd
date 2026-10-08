@@ -6,38 +6,86 @@
 \usage{
 bgev_mle(
   x,
-  lower = c(-12, 0.01, -12, -0.99),
-  upper = c(12, 12, 12, 12),
-  control = DEoptim::DEoptim.control(itermax = 100, NP = 100, trace = FALSE),
-  DEoptim_replicates = 5
+  likelihood = c("continuous_density", "grouped_likelihood"),
+  h = 1,
+  n_starts = 10,
+  k = 3,
+  control = list(maxit = 2000),
+  ...
 )
 }
 \arguments{
 \item{x}{Numeric vector of observations.}
 
-\item{lower}{Optional vector of lower bounds for the parameters (mu, sigma, xi, delta).}
+\item{likelihood}{Which likelihood to maximise: \code{"continuous_density"}
+(the default, using the density) or \code{"grouped_likelihood"} for discrete
+or rounded data, which uses the interval probability
+\code{F(x + h/2) - F(x - h/2)} of each observation (see \code{h}).}
 
-\item{upper}{Optional vector of upper bounds for the parameters (mu, sigma, xi, delta).}
+\item{h}{Rounding resolution for \code{"grouped_likelihood"} (default 1, for
+integer data). Ignored when \code{likelihood = "continuous_density"}.}
 
-\item{control}{List of control parameters, as returned by \link[DEoptim]{DEoptim.control}.}
+\item{n_starts}{Number of starting points for the multistart search
+(the quantile start plus \code{n_starts - 1} perturbed starts).}
 
-\item{DEoptim_replicates}{Number of independent DEoptim runs; the run with the
-best (highest) log-likelihood is returned.}
+\item{k}{Half-width multiplier for the data-driven box of perturbed starts.}
+
+\item{control}{List of control parameters passed to \link[stats]{optim}
+(defaults to a higher \code{maxit} than \code{optim}'s own, which the
+bounded search otherwise hits on this likelihood).}
+
+\item{...}{Additional arguments passed to \link[stats]{optim}.}
 }
 \value{
-The \link[DEoptim]{DEoptim} result for the best-performing replicate:
-  a list with \code{optim$bestmem} (the estimated \code{c(mu, sigma, xi, delta)})
-  and \code{optim$bestval} (the negative log-likelihood at that estimate).
+A list with \code{par} (named estimate \code{c(mu, sigma, xi, delta)}),
+  \code{loglik} (maximised log-likelihood, positive, on the chosen scale),
+  \code{likelihood} (which likelihood was used), \code{convergence}
+  (\code{optim} code, 0 = success), \code{start} (the quantile start),
+  \code{n_starts}, \code{loglik_starts}, \code{agree} (TRUE when several
+  starts reach the selected maximum), \code{admissible} (TRUE when the
+  returned optimum has a positive-definite Hessian), \code{boundary}
+  (support-boundary diagnostic), and \code{optimum} (gradient norm, Hessian
+  positive-definiteness and eigenvalue ratio at the estimate).
 }
 \description{
-Maximum Likelihood Estimation for the BGEV distribution
+Fits the BGEV distribution by maximum likelihood with a multistart local
+search (Nelder-Mead). The primary start comes from
+\link{bgev_start_using_quantiles}; additional starts are drawn inside a loose
+data-driven box (see \code{bgev_start_box}). The run with the highest
+log-likelihood is returned. Multistart guards against the multiple local
+maxima that are known to occur in bimodal likelihoods.
+}
+\details{
+The fit carries diagnostics (convergence, agreement across starts, and a
+support-boundary check) because the BGEV support depends on the parameters,
+so the usual regularity conditions can fail near the boundary. In that regime
+Hessian/Wald standard errors are not reliable; use a parametric bootstrap
+instead (planned for a future version).
+
+
+Although the BGEV distribution is defined for \code{delta > -1}, estimation is
+restricted to \code{delta > 0}. This is deliberate: bimodality -- the purpose
+of the model -- occurs only for \code{delta > 0}, and for \code{delta < 0} the
+density is unbounded at \code{x = mu} (the transform derivative
+\code{(delta + 1)|x - mu|^delta} diverges), giving a singular likelihood whose
+global maximum is a spurious spike on a data point. The revised BGEV reference
+estimates on \code{delta >= 0} for the same reason.
+
+The search is run on a reparametrised scale -- \code{log(sigma)} and
+\code{log(delta)} -- so that \code{sigma > 0} and \code{delta > 0} hold
+automatically. The only remaining penalty guards the data-dependent support
+(observations beyond the fitted endpoint), which is not a box constraint and
+cannot be transformed away. Among the multistart results, the fit returned is
+the highest-likelihood one whose Hessian at the optimum is positive-definite
+(a genuine interior maximum, rejecting spurious spikes); \code{admissible} is
+\code{FALSE} if none qualified. Estimates are reported on the natural scale.
 }
 \examples{
 \donttest{
 set.seed(1)
 x <- rbgev(n = 200, mu = 1, sigma = 1, xi = 1, delta = 1)
-fit <- bgev_mle(x, control = DEoptim::DEoptim.control(itermax = 20, NP = 40, trace = FALSE))
-fit$optim$bestmem
+fit <- bgev_mle(x)
+fit$par
 }
 }
 \author{

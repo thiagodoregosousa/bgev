@@ -41,10 +41,10 @@ rbgev(n, mu = 1, sigma = 1, xi = 0.3, delta = 2)
 }
 \description{
 Functions to compute the density, distribution function, quantile function,
-and to generate random variates for the bgebv (bimodal generalized extreme value)
+and to generate random variates for the BGEV (bimodal generalized extreme value)
 }
 \details{
-This distribution corresponds was proposed by in Cira EG Otiniano, 
+This distribution was proposed by Cira EG Otiniano,
 Bianca S Paiva, Roberto Vila and Marcelo Bourguignon (2021)
 }
 \note{
@@ -66,6 +66,13 @@ plot(sort(r), (1:1000)/1000, main = "Probability", ylab = "Probability")
 lines(x, pbgev(x), lwd = 2)
 
 round(qbgev(pbgev(q = seq(0, 3, by = 0.1)), 6),2)
+
+n <- 10000
+y <- rbgev(n)
+qqplot(qbgev(ppoints(n)), y,
+      main = "QQ-plot for bgev")
+qqline(y, distribution = function(p) qbgev(p),
+      probs = c(0.1, 0.6), col = 2)
 }
 \references{
 Otiniano, Cira E. G., et al. (2023).

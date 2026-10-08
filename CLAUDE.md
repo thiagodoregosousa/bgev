@@ -2,6 +2,10 @@
 
 This file provides guidance to Claude Code when working with code in this repository.
 
+## pkgdown 
+
+- dont do anything now, leave it for the cran submission step.
+
 ## Code style
 
 - Comment blocks of logic, not every line. Explain the "why" of a section, not the obvious.

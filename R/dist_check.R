@@ -55,11 +55,11 @@
 #'
 #' @examples
 #' \dontrun{
-#' distCheck("norm")
-#' distCheck("gev", xi = 0.2, sigma = 1, mu = 0,
+#' dist_check("norm")
+#' dist_check("gev", xi = 0.2, sigma = 1, mu = 0,
 #'           support.lower = -5, support.upper = 10)
 #' }
-distCheck <- function(
+dist_check <- function(
   fun = "norm",
   n = 1000,
   robust = FALSE,

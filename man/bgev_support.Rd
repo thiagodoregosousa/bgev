@@ -25,7 +25,7 @@ Returns the lower and upper limits of the support of the BGEV distribution
 It returns values with \code{-Inf} or \code{Inf} when the support is unbounded. 
 When the shape parameter \code{xi} is different from zero, the support 
 is truncated either at the left or at the right side of the real. 
-Considering the support is particularly useful to estimating momoments and 
+Considering the support is particularly useful to estimating moments and
 to compute the likelihood function.
 }
 \author{

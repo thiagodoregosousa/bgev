@@ -1,9 +1,9 @@
-test_that("distCheck consistency holds for bgev with xi != 0 and delta != 0", {
+test_that("dist_check consistency holds for bgev with xi != 0 and delta != 0", {
   mu <- 0; sigma <- 1; xi <- -0.3; delta <- 1
   support <- bgev_support(mu, sigma, xi, delta)
 
   set.seed(42)
-  res <- distCheck(fun = "bgev", n = 2000,
+  res <- dist_check(fun = "bgev", n = 2000,
                     support.lower = support[1], support.upper = support[2],
                     subdivisions = 5000, mu = mu, sigma = sigma, xi = xi, delta = delta,
                     print.result = FALSE)

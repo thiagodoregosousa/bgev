@@ -13,11 +13,11 @@ reference:
   - rbgev
 
 - title: Estimation
-  desc: Maximum likelihood fitting and the underlying log-likelihood.
+  desc: Maximum likelihood fitting, the log-likelihood, and estimation diagnostics.
   contents:
   - bgev_mle
   - bgev_log_likelihood
-  - bgev_start_using_quantiles
+  - bgev_profile_likelihood
 
 - title: Support & validity
   desc: Parameter checks and support of the distribution.

@@ -1,37 +1,42 @@
 # Backlog
 
-## Estimator work (active research)
+## Estimator — done this version
 
-Finish the grid-search + bounded-region MLE in `R/bgev_start_params.R` /
-`R/bgev_estimation.R`. Validate against arXiv:2109.12738 Prop 3.8 (tail
-behaviour) and eq. 3.6 (quantile). Extend
-`tests/testthat/test_bgev_estimation.R` / `test_bgev_start_quantile.R`
-accordingly, then re-run `benchmarks/monte_carlo_study.R` once stable.
+`bgev_mle` now uses a multistart Nelder-Mead local search seeded by the
+quantile start (`bgev_start_using_quantiles`) plus perturbed starts from a loose
+data-driven box (`bgev_start_box`). The search runs on a reparametrised scale
+(`log(sigma)`, `log(delta)`): estimation is restricted to `delta > 0` (bimodality
+needs it, and `delta < 0` gives an unbounded likelihood at `x = mu`), and the
+1e100 penalty only guards the data-dependent support; default `maxit` raised. It
+returns point estimates plus diagnostics (convergence, multistart agreement,
+`admissible` PD-Hessian gate, support-boundary check, `optimum`) and warns near
+the boundary and on tied data. `likelihood = "grouped_likelihood"` added for
+discrete/rounded data. `bgev_profile_likelihood` added. Dropped the grid-search
+/ LHS region (`bgev_start_region`) as redundant.
 
-## Data files
+Validated by Monte Carlo (`benchmarks/mc_study.R`): regular regime (xi >= -0.2)
+has ~0 bias, RMSE ~ 1/sqrt(n), near-nominal Wald coverage; the xi <~ -0.3
+boundary is non-regular (Wald coverage collapses, flagged by `admissible`).
+Methodology + results written up in `vignettes/bgev-estimation.Rmd`.
 
-`data/densidade_ar_max.xlsx` / `data/umidade_min_ex.csv` need to move to
-`inst/extdata` and be documented (or be dropped if unused) — their current
-placement in `data/` will trip `R CMD check`, which expects `.rda`/`.RData`
-there.
+## Estimator — next version
 
-## Confidence intervals / moments
+- **Standard errors / confidence intervals via parametric bootstrap** (not
+  Hessian/Wald, which the MC shows are invalid near the support boundary). Add
+  to the fit object; validate by re-running MC coverage on the xi <= -0.3 cells.
+- Document the boundary non-regularity limitation in the `bgev_mle` help page
+  and `NEWS.md`.
+- DE (DEoptim) as a *fallback* engine when the multistart disagrees or the
+  quantile start fails (re-add DEoptim to `Imports`) — low priority, MC shows
+  93-100% convergence without it.
 
-Flesh out or drop `to_be_implemented/bgev_conf_intervals_and_moments.R`.
+## Estimator — further validation (active research)
+
+Validate against arXiv:2109.12738 Prop 3.8 (tail behaviour) and eq. 3.6
+(quantile).
+
 
 ## CRAN resubmission
 
 Version bump, `NEWS.md`, `cran-comments.md`, full `R CMD check --as-cran`,
 submit.
-
-## qqplot for bgev
-
-No dedicated feature — at most, add a small qqplot demo to `qbgev`'s
-`@examples` (generic Q-Q machinery already works against any `q*` function,
-nothing bgev-specific to build).
-
-## pkgdown site
-
-Minimal `_pkgdown.yml` + GitHub Actions workflow to build and deploy to
-`gh-pages`. Once scaffolded, group the reference index (distribution vs.
-estimation vs. diagnostics) and theme it minimally.

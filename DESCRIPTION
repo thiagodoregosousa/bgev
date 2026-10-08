@@ -9,8 +9,9 @@ URL: https://thiagodoregosousa.github.io/bgev/, https://github.com/thiagodoregos
 Description: Density, distribution function, quantile function random generation and estimation of bimodal GEV distribution given in Otiniano et al. (2023) <doi:10.1007/s10651-023-00566-7>. This new generalization of the well-known GEV (Generalized Extreme Value) distribution is useful for modeling heterogeneous bimodal data from different areas.
 License: GPL (>=2)
 Depends: R(>= 2.15.0)
-Imports: EnvStats,DEoptim,stats,MASS,nleqslv,lhs
-Suggests: testthat (>= 3.0.0)
+Imports: EnvStats,stats,MASS,nleqslv,graphics,numDeriv
+Suggests: testthat (>= 3.0.0), knitr, rmarkdown
+VignetteBuilder: knitr
 Config/testthat/edition: 3
 Encoding: UTF-8
-RoxygenNote: 8.0.0
+Config/roxygen2/version: 8.1.0
