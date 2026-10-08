@@ -63,22 +63,25 @@ bgev_mle(
 
 ## Value
 
-A list with `par` (named estimate `c(mu, sigma, xi, delta)`), `loglik`
-(maximised log-likelihood, positive, on the chosen scale), `likelihood`
-(which likelihood was used), `convergence` (`optim` code, 0 = success),
-`start` (the quantile start), `n_starts`, `loglik_starts`, `agree` (TRUE
-when several starts reach the selected maximum), `admissible` (TRUE when
-the returned optimum has a positive-definite Hessian), `boundary`
-(support-boundary diagnostic), and `optimum` (gradient norm, Hessian
-positive-definiteness and eigenvalue ratio at the estimate).
+A list with `par` (named estimate `c(mu, sigma, xi, delta)`), `se`
+(standard errors from the inverse observed-information Hessian, `NA`
+unless `admissible`), `loglik` (maximised log-likelihood, positive, on
+the chosen scale), `likelihood` (which likelihood was used),
+`convergence` (`optim` code, 0 = success), `start` (the quantile start),
+`n_starts`, `loglik_starts`, `agree` (TRUE when several starts reach the
+selected maximum), `admissible` (TRUE when the returned optimum has a
+positive-definite Hessian), `boundary` (support-boundary diagnostic),
+and `optimum` (gradient norm, Hessian positive-definiteness, eigenvalue
+ratio and `se`).
 
 ## Details
 
 The fit carries diagnostics (convergence, agreement across starts, and a
 support-boundary check) because the BGEV support depends on the
 parameters, so the usual regularity conditions can fail near the
-boundary. In that regime Hessian/Wald standard errors are not reliable;
-use a parametric bootstrap instead (planned for a future version).
+boundary. Standard errors from the inverse observed-information Hessian
+are returned, but only for an admissible (regular) optimum; near the
+boundary they are not reliable and are returned as `NA`.
 
 Although the BGEV distribution is defined for `delta > -1`, estimation
 is restricted to `delta > 0`. This is deliberate: bimodality – the

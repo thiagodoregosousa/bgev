@@ -108,12 +108,17 @@ c(closed_form = unname(quantile(x, exp(-1))), truth = 5)
 
 So `quantile(x, exp(-1))` is an exact, parameter-free estimator of `mu`.
 For the Gumbel-type case `xi = 0`, closed forms exist for the other two
-parameters as well. With $`q_1 = Q(e^{-e^{2}})`$ and
-$`q_2 = Q(e^{-e^{1}})`$,
+parameters as well. Writing $`\hat\mu = Q(e^{-1})`$ and forming the
+**centered** quantiles $`q_k = Q(e^{-e^{k}}) - \hat\mu`$ for
+$`k = 1, 2`$,
 
 ``` math
 \delta = \frac{1}{\log_2(q_1/q_2)} - 1, \qquad \sigma = (-q_2)^{\delta+1}.
 ```
+
+(Centering by $`\hat\mu`$ is essential:
+$`q_k = -(\sigma k)^{1/(\delta+1)}`$ only after the location is
+removed.)
 
 These are documented for completeness. They are **not** used as the
 estimator: the general `xi` case has no such closed form, and
@@ -133,20 +138,29 @@ P\big(X \in [x - h/2,\ x + h/2]\big) = F(x + h/2) - F(x - h/2),
 ```
 
 which is bounded by one and cannot blow up (Pawitan, 2001, §4.8). Select
-it with the `likelihood` argument:
+it with the `likelihood` argument. To see that it does the right thing,
+we draw continuous BGEV data, **record it to the nearest integer**
+(resolution $`h = 1`$), and recover the generating parameters:
 
 ``` r
 
-xi_int <- sample(10:40, 120, replace = TRUE)       # integer data
-fit_grp <- bgev_mle(xi_int, likelihood = "grouped_likelihood", h = 1)
-round(fit_grp$par, 3)
-#>     mu  sigma     xi  delta 
-#> 21.269 14.542 -0.168  0.220
+set.seed(1)
+x_cont  <- rbgev(1000, mu = 0, sigma = 8, xi = 0.2, delta = 0.3)
+x_obs   <- round(x_cont)                                  # rounded to nearest unit
+fit_grp <- bgev_mle(x_obs, likelihood = "grouped_likelihood", h = 1)
+
+rbind(truth    = c(mu = 0, sigma = 8, xi = 0.2, delta = 0.3),
+      estimate = round(fit_grp$par, 2))
+#>             mu sigma   xi delta
+#> truth     0.00  8.00 0.20  0.30
+#> estimate -0.11  7.34 0.23  0.27
 ```
 
-On continuous data the grouped likelihood with a small `h` reproduces
-the continuous MLE; on discrete data it is the appropriate choice and
-suppresses the tied-data warning.
+The grouped fit stays close to the truth despite the rounding. On
+continuous data the grouped likelihood with a small `h` reproduces the
+continuous MLE; on discrete data it is the appropriate choice and
+suppresses the tied-data warning that the continuous density would
+raise.
 
 ## 4. Diagnostics returned with every fit
 
@@ -156,16 +170,26 @@ x   <- rbgev(300, mu = 0, sigma = 1, xi = 0.2, delta = 1)
 fit <- bgev_mle(x)
 round(fit$par, 3)
 #>     mu  sigma     xi  delta 
-#> -0.004  0.918  0.315  1.232
+#> -0.012  0.971  0.128  0.918
+round(fit$se, 3)
+#>    mu sigma    xi delta 
+#> 0.019 0.046 0.058 0.103
 c(loglik = fit$loglik, convergence = fit$convergence,
   admissible = fit$admissible, agree = fit$agree)
 #>      loglik convergence  admissible       agree 
-#>   -340.5378      0.0000      1.0000      0.0000
+#>   -361.2188      0.0000      1.0000      0.0000
 ```
 
+- **`se`** — standard errors from the inverse observed-information
+  Hessian (which is the Hessian of the negative log-likelihood at the
+  estimate). They are returned only for an `admissible` optimum; near
+  the parameter-dependent support boundary the regularity conditions
+  fail, so `se` is `NA` there.
 - **`convergence`** — the `optim` code (0 = success).
-- **`agree`** — whether several independent starts reached the same
-  maximum (a practical “is it global?” signal).
+- **`agree`** — `TRUE` if several independent starts reached the same
+  maximum (good evidence the optimum is global); `FALSE` if only one did
+  (a weaker signal — the maximum may be local, worth inspecting a
+  profile).
 - **`admissible`** — whether the returned optimum is a *regular*
   interior maximum: a positive-definite Hessian with eigenvalue ratio
   above `1e-6`. The multistart keeps the best admissible optimum and
@@ -177,8 +201,7 @@ c(loglik = fit$loglik, convergence = fit$convergence,
   eigenvalue ratio at the estimate.
 
 [`bgev_profile_likelihood()`](https://thiagodoregosousa.github.io/bgev/reference/bgev_profile_likelihood.md)
-complements these with a profile curve for any parameter — the check
-Otiniano et al. use to confirm an optimum is global.
+complements these with a profile curve for any parameter.
 
 ## 5. Monte Carlo validation
 
@@ -222,9 +245,9 @@ Admissible rate (positive-definite-Hessian gate), n = 500. {.table}
 Where Wald coverage holds the gate accepts ~100% of fits; where it fails
 it rejects 88–90%. A user who checks `fit$admissible` is steered away
 from exactly the fits whose Hessian-based standard errors cannot be
-trusted. For those boundary cells, parametric-bootstrap or
-profile-likelihood intervals are the appropriate alternative to Wald
-intervals.
+trusted — and in that regime
+[`bgev_mle()`](https://thiagodoregosousa.github.io/bgev/reference/bgev_mle.md)
+returns `se = NA` rather than an unreliable number.
 
 ## References
 

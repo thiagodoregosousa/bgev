@@ -30,6 +30,7 @@ maxima that are known to occur in bimodal likelihoods."></head><body>
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/bgev-estimation.html">Maximum Likelihood Estimation for the BGEV Distribution</a></li>
   </ul></li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/thiagodoregosousa/bgev/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
@@ -110,22 +111,24 @@ bounded search otherwise hits on this likelihood).</p></dd>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>A list with <code>par</code> (named estimate <code>c(mu, sigma, xi, delta)</code>),
-  <code>loglik</code> (maximised log-likelihood, positive, on the chosen scale),
-  <code>likelihood</code> (which likelihood was used), <code>convergence</code>
-  (<code>optim</code> code, 0 = success), <code>start</code> (the quantile start),
-  <code>n_starts</code>, <code>loglik_starts</code>, <code>agree</code> (TRUE when several
-  starts reach the selected maximum), <code>admissible</code> (TRUE when the
-  returned optimum has a positive-definite Hessian), <code>boundary</code>
-  (support-boundary diagnostic), and <code>optimum</code> (gradient norm, Hessian
-  positive-definiteness and eigenvalue ratio at the estimate).</p>
+  <code>se</code> (standard errors from the inverse observed-information Hessian,
+  <code>NA</code> unless <code>admissible</code>), <code>loglik</code> (maximised log-likelihood,
+  positive, on the chosen scale), <code>likelihood</code> (which likelihood was
+  used), <code>convergence</code> (<code>optim</code> code, 0 = success), <code>start</code>
+  (the quantile start), <code>n_starts</code>, <code>loglik_starts</code>, <code>agree</code>
+  (TRUE when several starts reach the selected maximum), <code>admissible</code>
+  (TRUE when the returned optimum has a positive-definite Hessian),
+  <code>boundary</code> (support-boundary diagnostic), and <code>optimum</code> (gradient
+  norm, Hessian positive-definiteness, eigenvalue ratio and <code>se</code>).</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>The fit carries diagnostics (convergence, agreement across starts, and a
 support-boundary check) because the BGEV support depends on the parameters,
-so the usual regularity conditions can fail near the boundary. In that regime
-Hessian/Wald standard errors are not reliable; use a parametric bootstrap
-instead (planned for a future version).</p>
+so the usual regularity conditions can fail near the boundary. Standard errors
+from the inverse observed-information Hessian are returned, but only for an
+admissible (regular) optimum; near the boundary they are not reliable and are
+returned as <code>NA</code>.</p>
 
 <p>Although the BGEV distribution is defined for <code>delta &gt; -1</code>, estimation is
 restricted to <code>delta &gt; 0</code>. This is deliberate: bimodality – the purpose
@@ -166,7 +169,7 @@ the highest-likelihood one whose Hessian at the optimum is positive-definite
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Cira Otiniano Author, Yasmin Lirio Author, Thiago Sousa Developer.</p>
+  <p>Developed by Thiago do Rego Sousa, Yasmin Lirio, Cira Etheowalda Guevara Otiniano.</p>
 </div>
 
 <div class="pkgdown-footer-right">
