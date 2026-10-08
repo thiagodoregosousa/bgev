@@ -36,8 +36,8 @@ A vector of length 2 with the lower and upper limits of the support
 It returns values with `-Inf` or `Inf` when the support is unbounded.
 When the shape parameter `xi` is different from zero, the support is
 truncated either at the left or at the right side of the real.
-Considering the support is particularly useful to estimating momoments
-and to compute the likelihood function.
+Considering the support is particularly useful to estimating moments and
+to compute the likelihood function.
 
 ## Author
 

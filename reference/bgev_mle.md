@@ -1,16 +1,24 @@
 # Maximum Likelihood Estimation for the BGEV distribution
 
-Maximum Likelihood Estimation for the BGEV distribution
+Fits the BGEV distribution by maximum likelihood with a multistart local
+search (Nelder-Mead). The primary start comes from
+[bgev_start_using_quantiles](https://thiagodoregosousa.github.io/bgev/reference/bgev_start_using_quantiles.md);
+additional starts are drawn inside a loose data-driven box (see
+`bgev_start_box`). The run with the highest log-likelihood is returned.
+Multistart guards against the multiple local maxima that are known to
+occur in bimodal likelihoods.
 
 ## Usage
 
 ``` r
 bgev_mle(
   x,
-  lower = c(-12, 0.01, -12, -0.99),
-  upper = c(12, 12, 12, 12),
-  control = DEoptim::DEoptim.control(itermax = 100, NP = 100, trace = FALSE),
-  DEoptim_replicates = 5
+  likelihood = c("continuous_density", "grouped_likelihood"),
+  h = 1,
+  n_starts = 10,
+  k = 3,
+  control = list(maxit = 2000),
+  ...
 )
 ```
 
@@ -20,32 +28,75 @@ bgev_mle(
 
   Numeric vector of observations.
 
-- lower:
+- likelihood:
 
-  Optional vector of lower bounds for the parameters (mu, sigma, xi,
-  delta).
+  Which likelihood to maximise: `"continuous_density"` (the default,
+  using the density) or `"grouped_likelihood"` for discrete or rounded
+  data, which uses the interval probability `F(x + h/2) - F(x - h/2)` of
+  each observation (see `h`).
 
-- upper:
+- h:
 
-  Optional vector of upper bounds for the parameters (mu, sigma, xi,
-  delta).
+  Rounding resolution for `"grouped_likelihood"` (default 1, for integer
+  data). Ignored when `likelihood = "continuous_density"`.
+
+- n_starts:
+
+  Number of starting points for the multistart search (the quantile
+  start plus `n_starts - 1` perturbed starts).
+
+- k:
+
+  Half-width multiplier for the data-driven box of perturbed starts.
 
 - control:
 
-  List of control parameters, as returned by
-  [DEoptim.control](https://rdrr.io/pkg/DEoptim/man/DEoptim.control.html).
+  List of control parameters passed to
+  [optim](https://rdrr.io/r/stats/optim.html) (defaults to a higher
+  `maxit` than `optim`'s own, which the bounded search otherwise hits on
+  this likelihood).
 
-- DEoptim_replicates:
+- ...:
 
-  Number of independent DEoptim runs; the run with the best (highest)
-  log-likelihood is returned.
+  Additional arguments passed to
+  [optim](https://rdrr.io/r/stats/optim.html).
 
 ## Value
 
-The [DEoptim](https://rdrr.io/pkg/DEoptim/man/DEoptim.html) result for
-the best-performing replicate: a list with `optim$bestmem` (the
-estimated `c(mu, sigma, xi, delta)`) and `optim$bestval` (the negative
-log-likelihood at that estimate).
+A list with `par` (named estimate `c(mu, sigma, xi, delta)`), `loglik`
+(maximised log-likelihood, positive, on the chosen scale), `likelihood`
+(which likelihood was used), `convergence` (`optim` code, 0 = success),
+`start` (the quantile start), `n_starts`, `loglik_starts`, `agree` (TRUE
+when several starts reach the selected maximum), `admissible` (TRUE when
+the returned optimum has a positive-definite Hessian), `boundary`
+(support-boundary diagnostic), and `optimum` (gradient norm, Hessian
+positive-definiteness and eigenvalue ratio at the estimate).
+
+## Details
+
+The fit carries diagnostics (convergence, agreement across starts, and a
+support-boundary check) because the BGEV support depends on the
+parameters, so the usual regularity conditions can fail near the
+boundary. In that regime Hessian/Wald standard errors are not reliable;
+use a parametric bootstrap instead (planned for a future version).
+
+Although the BGEV distribution is defined for `delta > -1`, estimation
+is restricted to `delta > 0`. This is deliberate: bimodality – the
+purpose of the model – occurs only for `delta > 0`, and for `delta < 0`
+the density is unbounded at `x = mu` (the transform derivative
+`(delta + 1)|x - mu|^delta` diverges), giving a singular likelihood
+whose global maximum is a spurious spike on a data point. The revised
+BGEV reference estimates on `delta >= 0` for the same reason.
+
+The search is run on a reparametrised scale – `log(sigma)` and
+`log(delta)` – so that `sigma > 0` and `delta > 0` hold automatically.
+The only remaining penalty guards the data-dependent support
+(observations beyond the fitted endpoint), which is not a box constraint
+and cannot be transformed away. Among the multistart results, the fit
+returned is the highest-likelihood one whose Hessian at the optimum is
+positive-definite (a genuine interior maximum, rejecting spurious
+spikes); `admissible` is `FALSE` if none qualified. Estimates are
+reported on the natural scale.
 
 ## Author
 
@@ -57,9 +108,10 @@ Thiago do Rego Sousa and Yasmin Lirio
 # \donttest{
 set.seed(1)
 x <- rbgev(n = 200, mu = 1, sigma = 1, xi = 1, delta = 1)
-fit <- bgev_mle(x, control = DEoptim::DEoptim.control(itermax = 20, NP = 40, trace = FALSE))
-fit$optim$bestmem
-#>      par1      par2      par3      par4 
-#> 0.8509898 1.5183835 1.7577140 1.4065316 
+fit <- bgev_mle(x)
+#> Warning: No start produced a regular (positive-definite, non-singular) Hessian; the returned estimate may be a boundary or spurious optimum -- see $optimum and $boundary.
+fit$par
+#>        mu     sigma        xi     delta 
+#> 0.9970241 0.8855053 0.9229374 1.0101225 
 # }
 ```

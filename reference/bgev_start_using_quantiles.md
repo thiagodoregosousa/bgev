@@ -1,6 +1,8 @@
 # Starting values for BGEV distribution
 
-Starting values for BGEV distribution
+Internal helper: data-driven starting values `c(mu, sigma, xi, delta)`
+from quantile matching, used to seed
+[bgev_mle](https://thiagodoregosousa.github.io/bgev/reference/bgev_mle.md).
 
 ## Usage
 
@@ -16,7 +18,7 @@ bgev_start_using_quantiles(x)
 
 ## Value
 
-starts_DEoptim start values for the estimation of (mu,sigma,xi,delta)
+A length-4 numeric vector of starting values for (mu, sigma, xi, delta).
 
 ## Author
 

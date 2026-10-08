@@ -13,14 +13,15 @@ GEV.
 
 ## Estimation
 
-Maximum likelihood fitting and the underlying log-likelihood.
+Maximum likelihood fitting, the log-likelihood, and estimation
+diagnostics.
 
 - [`bgev_mle()`](https://thiagodoregosousa.github.io/bgev/reference/bgev_mle.md)
   : Maximum Likelihood Estimation for the BGEV distribution
 - [`bgev_log_likelihood()`](https://thiagodoregosousa.github.io/bgev/reference/bgev_log_likelihood.md)
   : Log-likelihood function for the BGEV distribution
-- [`bgev_start_using_quantiles()`](https://thiagodoregosousa.github.io/bgev/reference/bgev_start_using_quantiles.md)
-  : Starting values for BGEV distribution
+- [`bgev_profile_likelihood()`](https://thiagodoregosousa.github.io/bgev/reference/bgev_profile_likelihood.md)
+  : Profile log-likelihood for a BGEV parameter
 
 ## Support & validity
 

@@ -16,6 +16,10 @@
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/bgev-estimation.html">Maximum Likelihood Estimation for the BGEV Distribution</a></li>
+  </ul></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/thiagodoregosousa/bgev/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
@@ -70,7 +74,7 @@
     <p>It returns values with <code>-Inf</code> or <code>Inf</code> when the support is unbounded.
 When the shape parameter <code>xi</code> is different from zero, the support
 is truncated either at the left or at the right side of the real.
-Considering the support is particularly useful to estimating momoments and
+Considering the support is particularly useful to estimating moments and
 to compute the likelihood function.</p>
     </div>
     <div class="section level2">

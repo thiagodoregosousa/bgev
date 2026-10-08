@@ -1,7 +1,7 @@
 # Bimodal GEV (generalized extreme value) distribution
 
 Functions to compute the density, distribution function, quantile
-function, and to generate random variates for the bgebv (bimodal
+function, and to generate random variates for the BGEV (bimodal
 generalized extreme value)
 
 ## Usage
@@ -70,8 +70,8 @@ rbgev(n, mu = 1, sigma = 1, xi = 0.3, delta = 2)
 
 ## Details
 
-This distribution corresponds was proposed by in Cira EG Otiniano,
-Bianca S Paiva, Roberto Vila and Marcelo Bourguignon (2021)
+This distribution was proposed by Cira EG Otiniano, Bianca S Paiva,
+Roberto Vila and Marcelo Bourguignon (2021)
 
 ## Note
 
@@ -107,4 +107,11 @@ lines(x, pbgev(x), lwd = 2)
 round(qbgev(pbgev(q = seq(0, 3, by = 0.1)), 6),2)
 #>  [1] 5.0 5.1 5.2 5.3 5.4 5.5 5.6 5.7 5.8 5.9 6.0 6.1 6.2 6.3 6.4 6.5 6.6 6.7 6.8
 #> [20] 6.9 7.0 7.1 7.2 7.3 7.4 7.5 7.6 7.7 7.8 7.9 8.0
+
+n <- 10000
+y <- rbgev(n)
+qqplot(qbgev(ppoints(n)), y,
+      main = "QQ-plot for bgev")
+qqline(y, distribution = function(p) qbgev(p),
+      probs = c(0.1, 0.6), col = 2)
 ```
