@@ -64,9 +64,10 @@ bgev_negative_log_likelihood_grouped <- function(x, pars, h) {
 #'
 #' The fit carries diagnostics (convergence, agreement across starts, and a
 #' support-boundary check) because the BGEV support depends on the parameters,
-#' so the usual regularity conditions can fail near the boundary. In that regime
-#' Hessian/Wald standard errors are not reliable; use a parametric bootstrap
-#' instead (planned for a future version).
+#' so the usual regularity conditions can fail near the boundary. Standard errors
+#' from the inverse observed-information Hessian are returned, but only for an
+#' admissible (regular) optimum; near the boundary they are not reliable and are
+#' returned as \code{NA}.
 #'
 #' @param x Numeric vector of observations.
 #' @param likelihood Which likelihood to maximise: \code{"continuous_density"}
@@ -102,14 +103,15 @@ bgev_negative_log_likelihood_grouped <- function(x, pars, h) {
 #' \code{FALSE} if none qualified. Estimates are reported on the natural scale.
 #'
 #' @return A list with \code{par} (named estimate \code{c(mu, sigma, xi, delta)}),
-#'   \code{loglik} (maximised log-likelihood, positive, on the chosen scale),
-#'   \code{likelihood} (which likelihood was used), \code{convergence}
-#'   (\code{optim} code, 0 = success), \code{start} (the quantile start),
-#'   \code{n_starts}, \code{loglik_starts}, \code{agree} (TRUE when several
-#'   starts reach the selected maximum), \code{admissible} (TRUE when the
-#'   returned optimum has a positive-definite Hessian), \code{boundary}
-#'   (support-boundary diagnostic), and \code{optimum} (gradient norm, Hessian
-#'   positive-definiteness and eigenvalue ratio at the estimate).
+#'   \code{se} (standard errors from the inverse observed-information Hessian,
+#'   \code{NA} unless \code{admissible}), \code{loglik} (maximised log-likelihood,
+#'   positive, on the chosen scale), \code{likelihood} (which likelihood was
+#'   used), \code{convergence} (\code{optim} code, 0 = success), \code{start}
+#'   (the quantile start), \code{n_starts}, \code{loglik_starts}, \code{agree}
+#'   (TRUE when several starts reach the selected maximum), \code{admissible}
+#'   (TRUE when the returned optimum has a positive-definite Hessian),
+#'   \code{boundary} (support-boundary diagnostic), and \code{optimum} (gradient
+#'   norm, Hessian positive-definiteness, eigenvalue ratio and \code{se}).
 #'
 #' @author Thiago do Rego Sousa and Yasmin Lirio
 #'
@@ -191,13 +193,20 @@ bgev_mle <- function(x, likelihood = c("continuous_density", "grouped_likelihood
 
   boundary <- bgev_check_boundary(x, par)
   if (boundary$near)
-    warning("Estimate is near the support boundary; likelihood-based standard ",
-            "errors (Hessian/Wald) are not reliable here. Prefer a parametric ",
-            "bootstrap for confidence intervals.", call. = FALSE)
+    warning("Estimate is near the support boundary; the standard errors from ",
+            "the Hessian are not reliable here (regularity conditions fail).",
+            call. = FALSE)
 
-  list(par = par, loglik = selected_loglik, likelihood = likelihood,
+  # Standard errors from the inverse observed-information Hessian. Only reported
+  # for an admissible (regular) optimum; near the parameter-dependent support
+  # boundary the Hessian is not trustworthy, so `se` is NA there.
+  pnames <- c("mu", "sigma", "xi", "delta")
+  se <- if (admissible) diag_sel$se else rep(NA_real_, 4)
+  se <- stats::setNames(se, pnames)
+
+  list(par = par, se = se, loglik = selected_loglik, likelihood = likelihood,
        convergence = selected$convergence,
-       start = stats::setNames(theta0, c("mu", "sigma", "xi", "delta")),
+       start = stats::setNames(theta0, pnames),
        n_starts = nrow(starts), loglik_starts = loglik_starts,
        agree = agree, admissible = admissible, boundary = boundary,
        optimum = diag_sel)
@@ -228,16 +237,23 @@ bgev_is_regular_optimum <- function(d, eig_ratio_tol = 1e-6) {
 
 bgev_optimum_diagnostics <- function(nll, par) {
   na <- list(grad_norm = NA_real_, hessian_pd = NA, eig_min = NA_real_,
-             eig_max = NA_real_, eig_ratio = NA_real_)
+             eig_max = NA_real_, eig_ratio = NA_real_, se = rep(NA_real_, length(par)))
   if (!requireNamespace("numDeriv", quietly = TRUE)) return(na)
   tryCatch({
     g <- numDeriv::grad(nll, par)
     H <- numDeriv::hessian(nll, par)
     eig <- eigen(H, symmetric = TRUE, only.values = TRUE)$values
+    # Standard errors from the inverse observed-information Hessian (H is the
+    # Hessian of the NEGATIVE log-likelihood, so H itself is the observed
+    # information). Valid only where the optimum is regular; a negative variance
+    # is returned as NA.
+    se <- tryCatch({
+      v <- diag(solve(H)); v[v < 0] <- NA_real_; sqrt(v)
+    }, error = function(e) rep(NA_real_, length(par)))
     list(grad_norm = sqrt(sum(g^2)),
          hessian_pd = all(eig > 0),
          eig_min = min(eig), eig_max = max(eig),
-         eig_ratio = min(eig) / max(eig))
+         eig_ratio = min(eig) / max(eig), se = se)
   }, error = function(e) na)
 }
 

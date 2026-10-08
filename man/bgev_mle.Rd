@@ -38,14 +38,15 @@ bounded search otherwise hits on this likelihood).}
 }
 \value{
 A list with \code{par} (named estimate \code{c(mu, sigma, xi, delta)}),
-  \code{loglik} (maximised log-likelihood, positive, on the chosen scale),
-  \code{likelihood} (which likelihood was used), \code{convergence}
-  (\code{optim} code, 0 = success), \code{start} (the quantile start),
-  \code{n_starts}, \code{loglik_starts}, \code{agree} (TRUE when several
-  starts reach the selected maximum), \code{admissible} (TRUE when the
-  returned optimum has a positive-definite Hessian), \code{boundary}
-  (support-boundary diagnostic), and \code{optimum} (gradient norm, Hessian
-  positive-definiteness and eigenvalue ratio at the estimate).
+  \code{se} (standard errors from the inverse observed-information Hessian,
+  \code{NA} unless \code{admissible}), \code{loglik} (maximised log-likelihood,
+  positive, on the chosen scale), \code{likelihood} (which likelihood was
+  used), \code{convergence} (\code{optim} code, 0 = success), \code{start}
+  (the quantile start), \code{n_starts}, \code{loglik_starts}, \code{agree}
+  (TRUE when several starts reach the selected maximum), \code{admissible}
+  (TRUE when the returned optimum has a positive-definite Hessian),
+  \code{boundary} (support-boundary diagnostic), and \code{optimum} (gradient
+  norm, Hessian positive-definiteness, eigenvalue ratio and \code{se}).
 }
 \description{
 Fits the BGEV distribution by maximum likelihood with a multistart local
@@ -58,9 +59,10 @@ maxima that are known to occur in bimodal likelihoods.
 \details{
 The fit carries diagnostics (convergence, agreement across starts, and a
 support-boundary check) because the BGEV support depends on the parameters,
-so the usual regularity conditions can fail near the boundary. In that regime
-Hessian/Wald standard errors are not reliable; use a parametric bootstrap
-instead (planned for a future version).
+so the usual regularity conditions can fail near the boundary. Standard errors
+from the inverse observed-information Hessian are returned, but only for an
+admissible (regular) optimum; near the boundary they are not reliable and are
+returned as \code{NA}.
 
 
 Although the BGEV distribution is defined for \code{delta > -1}, estimation is

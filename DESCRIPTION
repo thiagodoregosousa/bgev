@@ -2,8 +2,11 @@ Package: bgev
 Type: Package
 Title: Bimodal GEV Distribution with Location Parameter
 Version: 0.3
-Date: 2026-09-09
-Authors@R: c(person("Cira Otiniano", "Author", role = "aut",email = "ciragotiniano@gmail.com"),person("Yasmin Lirio", "Author", role = "aut"),person("Thiago Sousa", "Developer", role = "cre",email = "thiagodoregosousa@gmail.com"))
+Date: 2026-10-08
+Authors@R: c(
+    person("Thiago", "do Rego Sousa", role = c("aut", "cre"), email = "thiagodoregosousa@gmail.com"),
+    person("Yasmin", "Lirio", role = "aut"),
+    person("Cira Etheowalda", "Guevara Otiniano", role = "aut", email = "ciragotiniano@gmail.com"))
 BugReports: https://github.com/thiagodoregosousa/bgev/issues
 URL: https://thiagodoregosousa.github.io/bgev/, https://github.com/thiagodoregosousa/bgev
 Description: Density, distribution function, quantile function random generation and estimation of bimodal GEV distribution given in Otiniano et al. (2023) <doi:10.1007/s10651-023-00566-7>. This new generalization of the well-known GEV (Generalized Extreme Value) distribution is useful for modeling heterogeneous bimodal data from different areas.

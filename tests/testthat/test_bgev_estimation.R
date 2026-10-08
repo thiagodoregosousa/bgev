@@ -68,6 +68,18 @@ test_that("bgev_mle reports optimum diagnostics and admissibility", {
 })
 
 
+test_that("bgev_mle returns Hessian standard errors for an admissible fit", {
+  set.seed(1)
+  x <- rbgev(n = 300, mu = 0, sigma = 1, xi = 0.2, delta = 1)
+  fit <- bgev_mle(x)
+
+  expect_equal(names(fit$se), c("mu", "sigma", "xi", "delta"))
+  expect_true(fit$admissible)
+  expect_true(all(is.finite(fit$se)))
+  expect_true(all(fit$se > 0))
+})
+
+
 test_that("bgev_mle restricts estimation to delta > 0", {
   set.seed(1)
   fit <- bgev_mle(rbgev(n = 300, mu = 0, sigma = 1, xi = 0.2, delta = 1))
